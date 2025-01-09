@@ -24,11 +24,12 @@ const Image = styled.img`
     position : absolute;
     top : 13px;
     right : 70px;
+    cursot : pointer;
 `;
 
 const Logo = styled.img`
     width : 80px;
-    height : 60px;
+    height : 50px;
     position : absolute;
     top : 7px;
     left : 20px;
@@ -59,6 +60,9 @@ function Header() {
         navigate("/booklog");
     }
 
+    const navigateToLogin = () => {
+        navigate("/login");
+    }
     return (
         <Container>
             <Logo src={logo} alt="로고"/>
@@ -66,9 +70,8 @@ function Header() {
                 <NavLink onClick={navigateToHome}>HOME</NavLink>
                 <NavLink onClick={navigateToBookLog}>BOOKLOG</NavLink>
             </Nav>
-            <Image src={image} alt="회원"/>
+            <Image src={image} alt="회원" onClick={navigateToLogin}/>
         </Container>
-
     );
 }
 
