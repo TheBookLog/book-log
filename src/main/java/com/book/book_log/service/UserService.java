@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -64,12 +62,6 @@ public class UserService {
     // 닉네임 중복 확인
     public boolean isUsernameAvailable(String username) {
         return !uRepo.existsByUsername(username);
-    }
-
-    // 이메일 기반 사용자 조회 (소셜 로그인에 사용됨)
-    public Optional<UserResponseDTO> findUserByEmail(String email) {
-        return uRepo.findByEmail(email)
-                .map(this::toResponseDTO); // User -> DTO 변환
     }
 
     // DTO 변환 메서드

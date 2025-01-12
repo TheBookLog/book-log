@@ -31,9 +31,6 @@ public class User {
     @Column(length = 20)
     private AgeGroup age_group;
 
-    @Column(length = 100, unique = true)
-    private String email;
-
 //    // 소셜 로그인 관련 필드(나중에 구현)
 //    @Column(length = 20, nullable = false)
 //    private String oauth_provider;

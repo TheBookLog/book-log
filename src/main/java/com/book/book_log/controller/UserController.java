@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -51,13 +49,5 @@ public class UserController {
     public ResponseEntity<Boolean> checkUsername(@RequestParam String username) {
         boolean isAvailable = uSvc.isUsernameAvailable(username);
         return ResponseEntity.ok(isAvailable);
-    }
-
-    // 이메일 기반 사용자 조회
-    @GetMapping("/email/{email}")
-    public ResponseEntity<UserResponseDTO> findUserByEmail(@PathVariable String email) {
-        Optional<UserResponseDTO> user = uSvc.findUserByEmail(email);
-        return user.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 }
