@@ -14,13 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService uSvc;
 
-    // 사용자 생성
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO) {
-        UserResponseDTO createUser = uSvc.createUser(userRequestDTO);
-        return new ResponseEntity<>(createUser, HttpStatus.CREATED);
-    }
-
     // 사용자 정보 조회
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String id) {
