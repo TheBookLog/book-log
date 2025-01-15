@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import logo from "./logo.png";
+import Modal from "../component/Modal";
 
 const Container = styled.div`
     display: flex;
@@ -92,9 +93,10 @@ const SubmitButton = styled.button`
     padding: 10px 20px;
     font-size: 15px;
     border: none;
-    background-color : ${(props) => props.bgColor || "#25a745"};
+    background-color : ${(props) => props.backgroundColor || "#25a745"};
     border-radius: 10px;
     cursor: pointer;
+    align-items : center;
 
     &:hover {
         background-color: #ddd;
@@ -110,6 +112,24 @@ const ButtonContainer = styled.div`
     justify-content: center;
     margin-top : 25px;
 `;
+
+const ModalContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 내용 정렬 */
+    justify-content: center; /* 수직 중앙 정렬 */
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+`;
+
+const ModalButtonContainer = styled.div`
+    display: flex;
+    justify-content: center; /* 버튼을 가로로 중앙 배치 */
+    width: 100%;
+    margin-top: 10px;
+`;
+
 function AddInformation() {
     const [formData, setFormData] = useState({
         ninkname: "",
@@ -131,6 +151,11 @@ function AddInformation() {
         alert("성공적으로 제출되었습니다.");
         // 백엔드 로직
     };
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [backColor, setBackColor] = useState("rgba(0, 0, 0, 0.2)");
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
 
     return (
         <Container>
@@ -190,8 +215,16 @@ function AddInformation() {
 
                     {/* <SubmitButton type="submit">제출</SubmitButton> */}
                     <ButtonContainer>
-                        <SubmitButton bgColor="#D9D9D9">나중에 하기</SubmitButton>
-                        <SubmitButton bgColor="#CCEBFF">저장</SubmitButton>
+                        <SubmitButton backgroundColor="#D9D9D9">나중에 하기</SubmitButton>
+                        <SubmitButton backgroundColor="#CCEBFF" onClick={openModal}>저장</SubmitButton>
+                        <Modal isOpen={isModalOpen} closeModal={closeModal}>
+                            <ModalContent>
+                                <p>이미 사용중인 닉네임입니다.</p>
+                                <ModalButtonContainer>
+                                    <SubmitButton backgroundColor="#CCEBFF" onClick={closeModal} style={{width : "80px"}}>확인</SubmitButton>
+                                </ModalButtonContainer>
+                            </ModalContent>
+                        </Modal>
                     </ButtonContainer>
                 </FormContainer>
             </Area>
