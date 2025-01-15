@@ -17,21 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository uRepo;
 
-    // 사용자 생성
-    public UserResponseDTO createUser(UserRequestDTO dto) {
-        if (uRepo.existsByUsername(dto.getUsername())) {
-            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
-        }
-
-        User user = new User();
-        user.setUsername(dto.getUsername());
-        user.setGender(Gender.valueOf(dto.getGender().toUpperCase())); //String -> ENUM
-        user.setAge_group(AgeGroup.valueOf(dto.getAgeGroup().toUpperCase())); //String -> ENUM
-
-        User savedUser = uRepo.save(user);
-        return toResponseDTO(savedUser); // User -> DTO 변환
-    }
-
     // 사용자 조회
     public UserResponseDTO getUserById(String id) {
         User user =  uRepo.findById(id)
@@ -69,8 +54,9 @@ public class UserService {
         return new UserResponseDTO(
                 user.getId(),
                 user.getUsername(),
-                user.getGender().toString(), // ENUM -> String
-                user.getAge_group().toString() // ENUM -> String
+                user.getGender() != null ? user.getGender().toString() : null, // ENUM -> String
+                user.getAge_group() != null ? user.getAge_group().toString() : null, // ENUM -> String
+                user.getOauth_provider().toString() // ENUM -> String
         );
     }
 }
