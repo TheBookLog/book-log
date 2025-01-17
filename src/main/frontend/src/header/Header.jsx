@@ -53,7 +53,7 @@ const NavLink = styled.div`
 function Header() {
     const navigate = useNavigate();
     const navigateToHome = () => {
-        navigate("/");
+        navigate("/home");
     }
 
     const navigateToBookLog = () => {
