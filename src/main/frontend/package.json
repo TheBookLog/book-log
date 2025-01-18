@@ -5,10 +5,12 @@
   "dependencies": {
     "cra-template": "1.2.0",
     "react": "^19.0.0",
+    "react-datepicker": "^7.6.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.1",
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.3",
+    "react-star-ratings": "^2.3.0",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.14",
     "web-vitals": "^4.2.4"
