@@ -65,6 +65,8 @@ const Input = styled.input`
     width: 440px;
     margin-top : 10px;
     background-color : #EBF1F5;
+    outline : none;
+    autocomplete : false;
 `;
 
 const ButtonGroup = styled.div`
