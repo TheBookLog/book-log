@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import logo from "./logo.png";
 import Modal from "../component/Modal";
+import { Button, SubmitButton } from "../component/Button";
 
 const Container = styled.div`
     display: flex;
@@ -66,6 +67,8 @@ const Input = styled.input`
     width: 440px;
     margin-top : 10px;
     background-color : #EBF1F5;
+    outline : none;
+    autocomplete : false;
 `;
 
 const ButtonGroup = styled.div`
@@ -73,34 +76,6 @@ const ButtonGroup = styled.div`
     gap: 10px;
     flex-wrap: wrap;
     margin-top : 10px;
-`;
-
-const Button = styled.button`
-    padding: 9px 13px;
-    font-size: 15px;
-    border: ${(props) => (props.active ? "3px solid #5AA2D3" : "2px solid transparent")};
-    border-radius: 10px;
-    cursor: pointer;
-    background-color: ${(props) => (props.active ? "#CCEBFF" : "#EBF1F5")}; /* 배경색 고정 */
-    transition: border 0.3s ease, background-color 0.3s ease;
-
-    &:hover {
-        background-color: #ddd;
-    }
-`;
-
-const SubmitButton = styled.button`
-    padding: 10px 20px;
-    font-size: 15px;
-    border: none;
-    background-color : ${(props) => props.backgroundColor || "#25a745"};
-    border-radius: 10px;
-    cursor: pointer;
-    align-items : center;
-
-    &:hover {
-        background-color: #ddd;
-    }
 `;
 
 const ButtonContainer = styled.div`
@@ -215,13 +190,13 @@ function AddInformation() {
 
                     {/* <SubmitButton type="submit">제출</SubmitButton> */}
                     <ButtonContainer>
-                        <SubmitButton backgroundColor="#D9D9D9">나중에 하기</SubmitButton>
-                        <SubmitButton backgroundColor="#CCEBFF" onClick={openModal}>저장</SubmitButton>
+                        <SubmitButton bgColor="#D9D9D9">나중에 하기</SubmitButton>
+                        <SubmitButton bgColor="#CCEBFF" onClick={openModal}>저장</SubmitButton>
                         <Modal isOpen={isModalOpen} closeModal={closeModal}>
                             <ModalContent>
                                 <p>이미 사용중인 닉네임입니다.</p>
                                 <ModalButtonContainer>
-                                    <SubmitButton backgroundColor="#CCEBFF" onClick={closeModal} style={{width : "80px"}}>확인</SubmitButton>
+                                    <SubmitButton bgColor="#CCEBFF" onClick={closeModal} style={{width : "80px"}}>확인</SubmitButton>
                                 </ModalButtonContainer>
                             </ModalContent>
                         </Modal>
