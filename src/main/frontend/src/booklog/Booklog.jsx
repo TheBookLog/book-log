@@ -3,6 +3,7 @@ import styled from "styled-components";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ko } from "date-fns/locale";
+import { Button, SubmitButton } from "../component/Button";
 import image from "./image.png";
 import Ad4 from "./Ad4.jpg";
 
@@ -168,8 +169,17 @@ const ToggleButton = styled.button`
     &:hover {
         background-color: ${(props) => (props.isOn ? "#45a049" : "#e53935")};
     }
+    margin-top : 10px;
 `;
 
+const FlexContainer = styled.div`
+    display : flex;
+    justify-content : flex-end;
+    align-items : flex-end;
+    margin-top : 20px;
+    margin-right : 60px;
+`;
+    
 function Booklog({ maxStars = 5, onRatingChange }) {
     const [charCount, setCharCount] = useState(0);
     const [startDate, setStartDate] = useState(null);
@@ -263,6 +273,9 @@ function Booklog({ maxStars = 5, onRatingChange }) {
                             ({charCount}/1000)
                         </CharCount>
                     </InputWrapper>
+                    <FlexContainer>
+                        <SubmitButton bgColor="#CCEBFF">저장</SubmitButton>
+                    </FlexContainer>
                 </BookLogContainer>
                 <Footer />
             </Container>
