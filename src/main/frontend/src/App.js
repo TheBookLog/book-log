@@ -6,6 +6,7 @@ import Redirect from "./login/Redirect";
 import AddInformation from './login/AddInformation';
 import Home from './home/Home';
 import Booklog from './booklog/Booklog';
+import Mypage from './mypage/Mypage';
 import "react-datepicker/dist/react-datepicker.css";
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/redirect" element={<Redirect />}></Route>
         <Route path="/addinformation" element={<AddInformation />}></Route>
         <Route path="/booklog" element={<Booklog />}></Route>
+        <Route path="/mypage" element={<Mypage />}></Route>
       </Routes>
     </BrowserRouter>
   );
