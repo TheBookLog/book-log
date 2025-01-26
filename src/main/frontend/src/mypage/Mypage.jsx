@@ -20,6 +20,7 @@ const Text = styled.h5`
     font-size: ${(props) => props.size || "15px"};
     margin : 2px 0;
     margin-top : ${( props ) => props.mt || "0px"};
+    cursor : ${( props ) => props.cs || "none"};
 `;
 
 const Main = styled.div`
@@ -50,6 +51,29 @@ const Input = styled.input`
     autocomplete : false;
 `;
 
+const ButtonGroup = styled.div`
+    display : flex;
+    flex-wrap : wrap;
+    margin-top : 10px;
+    gap : 10px;
+`;
+
+const ButtonContainer = styled.div`
+    flex-direction : row;
+    align-items : center;
+    dispay : flex;
+    gap : 50px;
+    padding : 10px 20px;
+    justify-content : center;
+    margin-top : 25px;
+`;
+
+const Label = styled.label`
+    font-size : 18px;
+    margin-bottom : 10px;
+    margin-top : 10px;
+`;
+
 const Header = styled.div`
     background-color : #ccebff;
     text-align : center;
@@ -72,6 +96,28 @@ const Center = styled.img`
 const FormContainer = styled.form`
     display : flex;
     flex-direction : column;
+    max-width : 500px;
+    justify-content : flex-start;
+    margin : 0 200px;
+`;
+
+const ModalContent = styled.div`
+    display : flex;
+    flex-direction : column;
+    align-items : center;
+    justify-content : center;
+    padding : 20px;
+    background-color : white;
+    border-radius : 10px;
+`;
+
+const ModalButtonContainer = styled.div`
+    display : flex;
+    justify-content : center;
+    flex-direction : row;
+    align-items : center;
+    gap : 70px;
+    margin-top : 20px;
 `;
 
 function Mypage() {
@@ -121,7 +167,61 @@ function Mypage() {
                     <Center mt="10px" src={image1} alt="회원" />
                     <Text size="18px" mt="7px">유저 닉네임</Text>
                 </Div>
-
+                <FormContainer onSubmit={handleSubmit}>
+                    <Text size="18px" mt="15px">프로필 설정</Text>
+                    <Label htmlFor="ninkname">닉네임</Label>
+                    <Input
+                        type="text"
+                        id="ninkname"
+                        value={formData.ninkname}
+                        onChange={(e) => setFormData({...formData, ninkname : e.target.value})}
+                        required
+                    />
+                    <Label>성별</Label>
+                    <ButtonGroup>
+                        <Button 
+                            type="button"
+                            active={formData.gender === "남성"}
+                            onClick={() => handleGenderClick("남성")}
+                        >
+                            남성
+                        </Button>
+                        <Button
+                            type="button"
+                            active={(formData.gender === "여성")}
+                            onClick={() => handleGenderClick("여성")}
+                        >
+                            여성
+                        </Button>
+                    </ButtonGroup>
+                    <Label>연령대</Label>
+                    <ButtonGroup>
+                        {["10대", "20대", "30대", "40대", "50대", "60대 이상"].map((age) => (
+                            <Button
+                                key={age}
+                                type="button"
+                                active={formData.ageGroup === age}
+                                onClick={() => handleAgeGroupClick(age)}
+                            >
+                                {age}
+                            </Button>
+                        ))}
+                    </ButtonGroup>
+                    <ButtonContainer>
+                        <Text size="13px" cs="pointer" onClick={openModal}>회원탈퇴</Text>
+                        <Modal isOpen={isModalOpen} closeModal={closeModal}>
+                            <ModalContent>
+                                <Text size="25px">정말 탈퇴하시겠어요?</Text>
+                                <Text size="16px" mt="20px">탈퇴 버튼 선택 시, 계정은 <br /> 삭제되며 복구되지 않습니다.</Text>
+                                <ModalButtonContainer>
+                                    <SubmitButton bgColor="#D9D9D9" onClick={closeModal}>취소</SubmitButton>
+                                    <SubmitButton bgColor="#CCEBFF" >확인</SubmitButton>
+                                </ModalButtonContainer>
+                            </ModalContent>
+                        </Modal>
+                        <SubmitButton bgColor="#CCEBFF">수정하기</SubmitButton>
+                    </ButtonContainer>
+                </FormContainer>
             </Main>
             
         </Container>
