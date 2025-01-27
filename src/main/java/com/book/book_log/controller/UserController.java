@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService uSvc;
 
-    // 사용자 생성
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO) {
-        UserResponseDTO createUser = uSvc.createUser(userRequestDTO);
-        return new ResponseEntity<>(createUser, HttpStatus.CREATED);
-    }
-
     // 사용자 정보 조회
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String id) {
-        UserResponseDTO user = uSvc.getUserById(id);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<?> getUserById(@PathVariable String id) {
+        try {
+            System.out.println("Fetching User ID: " + id); // 추가 로그: 요청받은 ID 확인
+            UserResponseDTO user = uSvc.getUserById(id);
+            System.out.println("Fetched User: " + user); // 추가 로그: 조회된 사용자 정보 확인
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            System.err.println("Error fetching user: " + e.getMessage()); // 추가 로그: 예외 메시지 확인
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     // 사용자 정보 업데이트
