@@ -25,7 +25,7 @@ public class User {
     @Column(length = 50, nullable = false)
     @NotNull(message = "Username cannot be null")
     @Size(max = 50, message = "Username must be less than 50 characters")
-    private String username; // 설정하지 않을 경우 소셜 로그인 ID를 기본값으로 설정
+    private String username;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10)

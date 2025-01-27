@@ -2,6 +2,7 @@ package com.book.book_log.controller;
 
 import com.book.book_log.dto.UserResponseDTO;
 import com.book.book_log.service.CustomOAuth2UserService;
+import com.book.book_log.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,9 +42,11 @@ public class AuthController {
 
     // 사용자의 JWT 발급 및 전달
     @PostMapping("/issue-token")
-    public ResponseEntity<?> issueJwtToken(@RequestBody UserResponseDTO user) {
-        // JWT 생성 로직(추후 구현 예정)
-        String jwtToken = "JWT_TOKEN_EXAMPLE"; // TODO: JWT 생성 로직으로 대체
+    public ResponseEntity<String> issueJwtToken(@RequestBody UserResponseDTO user) {
+        if (user.getId() == null || user.getId().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required");
+        }
+        String jwtToken = JwtUtil.generateToken(user.getId());
         return ResponseEntity.ok(jwtToken);
     }
 }
