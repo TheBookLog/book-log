@@ -6,6 +6,7 @@ import com.book.book_log.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -48,5 +49,12 @@ public class AuthController {
         }
         String jwtToken = JwtUtil.generateToken(user.getId());
         return ResponseEntity.ok(jwtToken);
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        SecurityContextHolder.clearContext(); // 인증 정보 초기화
+        return ResponseEntity.ok("성공적으로 로그아웃 되었습니다."); // 로그아웃 성공 메시지 반환
     }
 }
