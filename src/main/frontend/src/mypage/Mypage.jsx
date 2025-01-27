@@ -17,9 +17,10 @@ const Main2 = styled.div`
 `;
 
 const Text = styled.h5`
-    font-size: ${(props) => props.size || "15px"};
+    font-size: ${(props) => props.size || "12px"};
     margin : 2px 0;
     margin-top : ${( props ) => props.mt || "0px"};
+    margin-bottom : ${( props ) => props.mb || "0px"};
     cursor : ${( props ) => props.cs || "none"};
 `;
 
@@ -37,6 +38,7 @@ const Div = styled.div`
     display : flex;
     flex-direction : column;
     align-items : center;
+    z-index : 1;
 `;
 
 const Input = styled.input`
@@ -45,7 +47,7 @@ const Input = styled.input`
     border: none;
     border-radius: 10px;
     width: 440px;
-    margin-top : 10px;
+    margin-top : 5px;
     background-color : #EBF1F5;
     outline : none;
     autocomplete : false;
@@ -59,18 +61,17 @@ const ButtonGroup = styled.div`
 `;
 
 const ButtonContainer = styled.div`
+    display : flex;
     flex-direction : row;
-    align-items : center;
-    dispay : flex;
-    gap : 50px;
+    gap : 30px;
     padding : 10px 20px;
-    justify-content : center;
+    justify-content : space-between;
     margin-top : 25px;
 `;
 
 const Label = styled.label`
     font-size : 18px;
-    margin-bottom : 10px;
+    margin-bottom : 3px;
     margin-top : 10px;
 `;
 
@@ -98,7 +99,8 @@ const FormContainer = styled.form`
     flex-direction : column;
     max-width : 500px;
     justify-content : flex-start;
-    margin : 0 200px;
+    width : 80%;
+    margin : 0 500px;
 `;
 
 const ModalContent = styled.div`
@@ -163,12 +165,13 @@ function Mypage() {
                     <Center width="18px" height="18px" mt="14px" ml="3px" src={image} alt="관리" />
                 </Main2>
                 <Text mt="3px">로그아웃</Text>
+            </Main>
                 <Div>
                     <Center mt="10px" src={image1} alt="회원" />
-                    <Text size="18px" mt="7px">유저 닉네임</Text>
+                    <Text size="25px" mt="7px">유저 닉네임</Text>
                 </Div>
                 <FormContainer onSubmit={handleSubmit}>
-                    <Text size="18px" mt="15px">프로필 설정</Text>
+                    <Text size="20px" mt="50px" mb="10px">프로필 설정</Text>
                     <Label htmlFor="ninkname">닉네임</Label>
                     <Input
                         type="text"
@@ -209,20 +212,20 @@ function Mypage() {
                     </ButtonGroup>
                     <ButtonContainer>
                         <Text size="13px" cs="pointer" onClick={openModal}>회원탈퇴</Text>
-                        <Modal isOpen={isModalOpen} closeModal={closeModal}>
-                            <ModalContent>
-                                <Text size="25px">정말 탈퇴하시겠어요?</Text>
-                                <Text size="16px" mt="20px">탈퇴 버튼 선택 시, 계정은 <br /> 삭제되며 복구되지 않습니다.</Text>
-                                <ModalButtonContainer>
-                                    <SubmitButton bgColor="#D9D9D9" onClick={closeModal}>취소</SubmitButton>
-                                    <SubmitButton bgColor="#CCEBFF" >확인</SubmitButton>
-                                </ModalButtonContainer>
-                            </ModalContent>
-                        </Modal>
+                            <Modal isOpen={isModalOpen} closeModal={closeModal}>
+                                <ModalContent>
+                                    <Text size="25px">정말 탈퇴하시겠어요?</Text>
+                                    <Text size="16px" mt="20px">탈퇴 버튼 선택 시, 계정은 <br /> 삭제되며 복구되지 않습니다.</Text>
+                                    <ModalButtonContainer>
+                                        <SubmitButton bgColor="#D9D9D9" onClick={closeModal}>취소</SubmitButton>
+                                        <SubmitButton bgColor="#CCEBFF" >확인</SubmitButton>
+                                    </ModalButtonContainer>
+                                </ModalContent>
+                            </Modal>
                         <SubmitButton bgColor="#CCEBFF">수정하기</SubmitButton>
                     </ButtonContainer>
                 </FormContainer>
-            </Main>
+            
             
         </Container>
     )
