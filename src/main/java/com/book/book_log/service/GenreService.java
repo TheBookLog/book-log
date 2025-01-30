@@ -29,4 +29,11 @@ public class GenreService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 장르를 찾을 수 없습니다: " + id));
         return new GenreResponseDTO(genre);
     }
+
+    // 특정 장르 조회(이름 기반)
+    public GenreResponseDTO getGenreByName(String name) {
+        Genre genre = genreRepo.findByName(name)
+                .orElseThrow(() -> new IllegalArgumentException("해당 장르를 찾을 수 없습니다: " + name));
+        return new GenreResponseDTO(genre);
+    }
 }
