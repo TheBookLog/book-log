@@ -29,7 +29,6 @@ public class Book {
     @Column(length = 255)
     private String coverUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "genre_id", nullable = false)
-    private Genre genre;
+    @Column(nullable = false)
+    private Integer categoryId;
 }

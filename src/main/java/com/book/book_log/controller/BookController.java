@@ -37,4 +37,11 @@ public class BookController {
         BookResponseDTO book = bookSvc.getBookById(id);
         return ResponseEntity.ok(book);
     }
+
+    // 특정 카테고리의 책 조회(categoryId 기준 필터링)
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<BookResponseDTO>> getBooksByCategory(@PathVariable Integer categoryId) {
+        List<BookResponseDTO> books = bookSvc.getBooksByCategory(categoryId);
+        return ResponseEntity.ok(books);
+    }
 }

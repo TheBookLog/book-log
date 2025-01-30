@@ -24,4 +24,10 @@ public class BookService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 책을 찾을 수 없습니다: " + id));
         return new BookResponseDTO(book);
     }
+
+    // 특정 카테고리 ID로 책 조회
+    public List<BookResponseDTO> getBooksByCategory(Integer categoryId) {
+        List<Book> books = bookRepo.findByCategoryId(categoryId);
+        return books.stream().map(BookResponseDTO::new).collect(Collectors.toList());
+    }
 }
