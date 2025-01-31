@@ -21,8 +21,9 @@ public class LogService {
     private final LogRepository logRepo;
     private final BookRepository bookRepo;
     private final UserRepository userRepo;
+    private final StatisticsService statisticsSvc;
 
-    // Log 생성(Book 자동 저장)
+    // Log 생성(Book 자동 저장 및 통계 업데이트 포함)
     @Transactional
     public LogResponseDTO createLog(String userId, LogRequestDTO request) {
         User user = userRepo.findById(userId)
@@ -54,7 +55,11 @@ public class LogService {
         log.setStartDate(request.getStartDate());
         log.setEndDate(request.getEndDate());
 
-        return new LogResponseDTO(logRepo.save(log));
+        logRepo.save(log);
+
+        statisticsSvc.updateStatistics(book);
+
+        return new LogResponseDTO(log);
     }
 
     // 특정 책에 대한 Log 목록 조회
@@ -78,16 +83,23 @@ public class LogService {
         log.setStartDate(request.getStartDate());
         log.setEndDate(request.getEndDate());
 
-        return new LogResponseDTO(logRepo.save(log));
+        logRepo.save(log);
+
+        statisticsSvc.updateStatistics(log.getBook());
+
+        return new LogResponseDTO(log);
     }
 
     // Log 삭제
     @Transactional
     public void deleteLog(String logId) {
-        if (!logRepo.existsById(logId)) {
-            throw new IllegalArgumentException("해당 Log를 찾을 수 없습니다: " + logId);
-        }
-        logRepo.deleteById(logId);
+        Log log = logRepo.findById(logId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 Log를 찾을 수 없습니다: " + logId));
+
+        Book book = log.getBook();
+        logRepo.delete(log);
+
+        statisticsSvc.updateStatistics(book);
     }
 
     // 별점 검증 로직 (1~5 범위, 0.5 단위)
