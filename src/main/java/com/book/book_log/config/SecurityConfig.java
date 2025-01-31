@@ -21,7 +21,8 @@ public class SecurityConfig {
                                 "/login/oauth2/**", // Spring Security OAuth2 로그인 리다이렉트
                                 "/api/auth/issue-token", // JWT 발급 엔드포인트 허용
                                 "/api/books/**", // 도서 검색 API 인증 없이 허용
-                                "/api/categories/**" // 카테고리 검색 인증 없이 활용
+                                "/api/categories/**", // 카테고리 검색 인증 없이 활용
+                                "/api/logs/**" // 로그 API 인증 없이 허용
                         ).permitAll()                // 인증 없이 허용
                         .anyRequest().authenticated()    // 나머지 요청은 인증 필요
                 )
