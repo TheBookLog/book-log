@@ -12,16 +12,16 @@ public class BookResponseDTO {
     private String author;
     private String publisher;
     private String coverUrl;
-    private String genreName;
+    private Integer categoryId;
 
     // 직접 필드를 설정하는 방식
-    public BookResponseDTO(String id, String title, String author, String publisher, String coverUrl, String genreName) {
+    public BookResponseDTO(String id, String title, String author, String publisher, String coverUrl, Integer categoryId) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.coverUrl = coverUrl;
-        this.genreName = genreName;
+        this.categoryId = categoryId;
     }
 
     // Book 엔티티를 직접 받아서 DTO로 변환하는 생성자 추가
@@ -31,6 +31,6 @@ public class BookResponseDTO {
         this.author = book.getAuthor();
         this.publisher = book.getPublisher();
         this.coverUrl = book.getCoverUrl();
-        this.genreName = book.getGenre() != null ? book.getGenre().getName() : null; // Genre가 null일 경우 대비
+        this.categoryId = book.getCategoryId();
     }
 }
