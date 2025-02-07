@@ -19,9 +19,8 @@ function Redirect() {
 
                     if(response.data.accessToken) {
                         document.cookie = `accessToken=${response.data.accessToken}; path=/;`;
+                        navigate("/addinformation")
                     }
-
-                    navigate("/");
                 })
                 .catch((error) => {
                     console.error("로그인 실패: ", error);
