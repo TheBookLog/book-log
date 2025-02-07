@@ -118,10 +118,24 @@ function AddInformation() {
     const handleChange = (e) => {
         setFormData({
             ...formData,
-            [e.target.value] : e.target.value,
+            [e.target.name] : e.target.value,
         });
     };
 
+    const handleGenderClick = (gender) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            gender,
+        }));
+    };
+
+    const handleAgeGroupClick = (ageGroup) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            ageGroup,
+        }));
+    };
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         
@@ -187,7 +201,7 @@ function AddInformation() {
                             id="nickname"
                             name="nickname"
                             value={formData.nickname}
-                            onChange={(e) => setFormData({ ...formData, ninkname: e.target.value })}
+                            onChange={handleChange}
                             required
                         />
                     </div>
