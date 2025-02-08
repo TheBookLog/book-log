@@ -4,10 +4,9 @@ import axios from "axios";
 
 function Redirect() {
     const navigate = useNavigate();
-
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get("code");
+        const code = urlParams.get("code");     
 
         if (code) {
             axios
