@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import image1 from "./image1.png";
 import image from "./image.png";
 import Modal from "../component/Modal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, SubmitButton } from "../component/Button";
 
 const Container = styled.div`
@@ -123,11 +123,50 @@ const ModalButtonContainer = styled.div`
 `;
 
 function Mypage() {
+    const navigate = useNavigate();
+    const { id } = useParams();
+
     const [formData, setFormData ] = useState({
-        ninkname : "",
+        nickname : "",
         gender : "",
         ageGroup : "",
     });
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [nicknameError, setNicknameError] = useState("");
+    
+    useEffect(() => { //기본값이 GET
+        fetch(`/api/users/${id}`)
+            .then((res) => res.json())
+            .then((data) => {
+                setFormData({
+                    nickname : data.nickname || "",
+                    gender : data.gender || "",
+                    ageGroup : data.ageGroup || "",
+                });
+            })
+            .catch((err) => console.error("Error : ",err));
+    },[id]);
+
+    const handleNinknameChange = async (e) => {
+        const newNickname = e.target.value;
+        setFormData({...formData, nickname : newNickname});
+
+        if (newNickname.trim()==="") return;
+
+        try {
+            const response = await fetch(`/api/users/check-username?username=${newNickname}`);
+            const data = await response.json();
+            if (!data.available) {
+                setNicknameError("이미 사용 중인 닉네임입니다.");
+            } else {
+                setNicknameError("");
+            }
+        } catch (error) {
+            console.error("Error : ",error);
+        }
+    };
+
     const handleGenderClick = (gender) => {
         setFormData({ ...formData, gender });
     };
@@ -136,19 +175,66 @@ function Mypage() {
         setFormData({ ...formData, ageGroup });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Form Data Submitted: ", formData);
-        alert("성공적으로 제출되었습니다.");
-        // 백엔드 로직
+    const handleLogout = async () => {
+        try {
+            const response = await fetch("api/auth/logout", {
+                method : "POST",
+                credentials : "include",
+            });
+
+            if (response.ok) {
+                alert("로그아웃되었습니다.");
+                navigate("/home");
+            } else {
+                alert("로그아웃 실패");
+            }
+        } catch (error) {
+            console.error("Logout : ", error);
+        }
+    }
+
+    const handleDeleteAccount = async (e) => {
+        try {
+            const response = await fetch(`/api/users/${id}`, {
+                method : "DELETE",
+            });
+            if (response.ok) {
+                alert("회원 탈퇴가 완료되었습니다.");
+                navigate("/home");
+            } else {
+                alert("회원 탈퇴 실패");
+            }
+        } catch (error) {
+            console.error("Delete account error : ", error);
+        }
     };
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        try {
+            const response = await fetch(`/api/users/${id}`, {
+                method : "PUT",
+                headers : {
+                    "Content-Type" : "application/json",
+                },
+                body : JSON.stringify(formData),
+            });
+            if(response.ok) {
+                alert("성공적으로 수정되었습니다. !");
+            } else {
+                alert("수정에 실패하였습니다.");
+            }
+        } catch (error) {
+            console.error("Error : ", error);
+        }
+    };
+
+    
     const [backColor, setBackColor] = useState("rgba(0, 0, 0, 0.2)");
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
-    const navigate = useNavigate();
     const navigateToProfile = () => {
         navigate("/profile");
     }
@@ -164,7 +250,7 @@ function Mypage() {
                     <Text mt="13px">프로필 관리</Text>
                     <Center width="18px" height="18px" mt="14px" ml="3px" src={image} alt="관리" />
                 </Main2>
-                <Text mt="3px">로그아웃</Text>
+                <Text mt="3px" onClick={handleLogout}>로그아웃</Text>
             </Main>
                 <Div>
                     <Center mt="10px" src={image1} alt="회원" />
@@ -176,10 +262,11 @@ function Mypage() {
                     <Input
                         type="text"
                         id="ninkname"
-                        value={formData.ninkname}
-                        onChange={(e) => setFormData({...formData, ninkname : e.target.value})}
+                        value={formData.nickname}
+                        onChange={handleNinknameChange}
                         required
                     />
+                    {nicknameError && <Text size="12px" style={{ color : "red"}}>{nicknameError}</Text>}
                     <Label>성별</Label>
                     <ButtonGroup>
                         <Button 
@@ -218,7 +305,7 @@ function Mypage() {
                                     <Text size="16px" mt="20px">탈퇴 버튼 선택 시, 계정은 <br /> 삭제되며 복구되지 않습니다.</Text>
                                     <ModalButtonContainer>
                                         <SubmitButton bgColor="#D9D9D9" onClick={closeModal}>취소</SubmitButton>
-                                        <SubmitButton bgColor="#CCEBFF" >확인</SubmitButton>
+                                        <SubmitButton bgColor="#CCEBFF" onClick={handleDeleteAccount}>확인</SubmitButton>
                                     </ModalButtonContainer>
                                 </ModalContent>
                             </Modal>
