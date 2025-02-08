@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import logo from "./logo.png";
 import Modal from "../component/Modal";
 import { Button, SubmitButton } from "../component/Button";
+import axios from "axios";
 
 const Container = styled.div`
     display: flex;
@@ -106,25 +108,75 @@ const ModalButtonContainer = styled.div`
 `;
 
 function AddInformation() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        ninkname: "",
+        nickname: "",
         gender: "",
         ageGroup: "",
     });
 
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name] : e.target.value,
+        });
+    };
+
     const handleGenderClick = (gender) => {
-        setFormData({ ...formData, gender });
+        setFormData((prevData) => ({
+            ...prevData,
+            gender,
+        }));
     };
 
     const handleAgeGroupClick = (ageGroup) => {
-        setFormData({ ...formData, ageGroup });
+        setFormData((prevData) => ({
+            ...prevData,
+            ageGroup,
+        }));
     };
-
-    const handleSubmit = (e) => {
+    
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted: ", formData);
-        alert("성공적으로 제출되었습니다.");
-        // 백엔드 로직
+        
+        try { //쿠키에서 토큰 가져오기
+            const accessToken = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('accessToken='))
+                ?.split('=')[1];
+            if (!accessToken) {
+                console.error("JWT 토큰 없음");
+                return;
+            }
+
+            const userId = localStorage.getItem("userId");
+
+            if (!userId) {
+                console.error("사용자 ID 없음");
+                return;
+            }
+
+            // PUT 요청
+            const response = await axios.put(
+                "http://localhost:8080/api/users/${userId}",
+                {
+                    ninkname : formData.nickname,
+                    gender : formData.gender,
+                    ageGroup : formData.ageGroup,
+                },
+                {
+                    headers : {Authorization : `Bearer ${accessToken}`},
+                    withCredentials : true,
+                }
+            );
+
+            console.log("사용자 정보 업데이트 성공 : ", response.data);
+            navigate("/home");
+        }
+
+        catch (error) {
+            console.log("사용자 정보 업데이트 실패 : ", error);
+        }
     };
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -148,8 +200,8 @@ function AddInformation() {
                             type="text"
                             id="nickname"
                             name="nickname"
-                            value={formData.ninkname}
-                            onChange={(e) => setFormData({ ...formData, ninkname: e.target.value })}
+                            value={formData.nickname}
+                            onChange={handleChange}
                             required
                         />
                     </div>
