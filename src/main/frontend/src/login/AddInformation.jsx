@@ -115,6 +115,11 @@ function AddInformation() {
         ageGroup: "",
     });
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -140,27 +145,25 @@ function AddInformation() {
         e.preventDefault();
         
         try { //쿠키에서 토큰 가져오기
-            const accessToken = document.cookie
-                .split('; ')
-                .find(row => row.startsWith('accessToken='))
-                ?.split('=')[1];
+            const checkResponse = await axios.get(`http://localhost:8080/api/users/check-username?username=${formData.nickname}`);
+            if (checkResponse.data.exists) {
+                openModal();
+                return;
+            }
+            const accessToken = localStorage.getItem("accessToken");
             if (!accessToken) {
                 console.error("JWT 토큰 없음");
                 return;
             }
-
             const userId = localStorage.getItem("userId");
-
             if (!userId) {
                 console.error("사용자 ID 없음");
                 return;
             }
-
-            // PUT 요청
             const response = await axios.put(
-                "http://localhost:8080/api/users/${userId}",
+                `http://localhost:8080/api/users/${userId}`,
                 {
-                    ninkname : formData.nickname,
+                    nickname : formData.nickname,
                     gender : formData.gender,
                     ageGroup : formData.ageGroup,
                 },
@@ -169,8 +172,7 @@ function AddInformation() {
                     withCredentials : true,
                 }
             );
-
-            console.log("사용자 정보 업데이트 성공 : ", response.data);
+            console.log("사용자 정보 업데이트 성공 : ",response.data);
             navigate("/home");
         }
 
@@ -179,10 +181,8 @@ function AddInformation() {
         }
     };
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    
     const [backColor, setBackColor] = useState("rgba(0, 0, 0, 0.2)");
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
 
     return (
         <Container>
@@ -242,8 +242,8 @@ function AddInformation() {
 
                     {/* <SubmitButton type="submit">제출</SubmitButton> */}
                     <ButtonContainer>
-                        <SubmitButton bgColor="#D9D9D9">나중에 하기</SubmitButton>
-                        <SubmitButton bgColor="#CCEBFF" onClick={openModal}>저장</SubmitButton>
+                        <SubmitButton bgColor="#D9D9D9" type="button" onClick={()=>navigate("/home")}>나중에 하기</SubmitButton>
+                        <SubmitButton bgColor="#CCEBFF" type="submit">저장</SubmitButton>
                         <Modal isOpen={isModalOpen} closeModal={closeModal}>
                             <ModalContent>
                                 <p>이미 사용중인 닉네임입니다.</p>

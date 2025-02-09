@@ -4,22 +4,32 @@ import axios from "axios";
 
 function Redirect() {
     const navigate = useNavigate();
-
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get("code");
+        const code = urlParams.get("code");     
 
         if (code) {
             axios
-                .get(`http://localhost:8080/api/auth/kakao-login/callback?code=${code}`, {
-                    withCredentials: true, // 쿠키 포함 요청
-                })
+                .post("http://localhost:8080/api/auth/kakao-login/callback", { code }, { withCredentials : true})
                 .then((response) => {
                     console.log("로그인 성공: ", response.data);
 
-                    if(response.data.accessToken) {
-                        document.cookie = `accessToken=${response.data.accessToken}; path=/;`;
-                        navigate("/addinformation")
+                    const { isNewUSer, kakaoId } = response.data;
+
+                    if (!isNewUSer) {
+                        axios
+                            .post("http://localhost:8080/api/auth/issue-token", { kakaoId }, { withCredentials : true })
+                            .then((jwtResponse) => {
+                                console.log("JWT 발급 성공 : ", jwtResponse.data);
+                                localStorage.setItem("accessToken", jwtResponse.data.accessToken);
+                                localStorage.setItem("userId", jwtResponse.data.userId);
+                                navigate("/home");
+                            })
+                            .catch((jwtError) => {
+                                console.error("JWT 발급 실패:", jwtError);
+                            });
+                    } else {
+                        navigate("/addinformation", { state : {kakaoId}});
                     }
                 })
                 .catch((error) => {
