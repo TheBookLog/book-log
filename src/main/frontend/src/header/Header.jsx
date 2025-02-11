@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import logo from "./logo.png";
 import image from "./image.png";
@@ -52,8 +52,18 @@ const NavLink = styled.div`
 
 function Header() {
     const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        // 로그인 여부를 LocalStroage에서 확인
+        const accessToken = localStorage.getItem("accessToken");
+        if (accessToken) {
+            setIsLoggedIn(true);
+        }
+    }, []);
+
     const navigateToHome = () => {
-        navigate("/");
+        navigate("/home");
     }
 
     const navigateToBookLog = () => {
@@ -63,6 +73,18 @@ function Header() {
     const navigateToLogin = () => {
         navigate("/login");
     }
+
+    const navigaetToMyPage = () => {
+        navigate("/mypage");
+    }
+
+    const handleImageClick = () => {
+        if (isLoggedIn) {
+            navigaetToMyPage(); //로그인된 경우 마이페이지로 이동
+        } else {
+            navigateToLogin(); //로그인되지 않은 경우 로그인페이지로 이동
+        }
+    }
     return (
         <Container>
             <Logo src={logo} alt="로고"/>
@@ -70,7 +92,7 @@ function Header() {
                 <NavLink onClick={navigateToHome}>HOME</NavLink>
                 <NavLink onClick={navigateToBookLog}>BOOKLOG</NavLink>
             </Nav>
-            <Image src={image} alt="회원" onClick={navigateToLogin}/>
+            <Image src={image} alt="회원" onClick={handleImageClick}/>
         </Container>
     );
 }
