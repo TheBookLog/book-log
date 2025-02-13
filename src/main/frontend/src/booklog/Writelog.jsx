@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import styled from "styled-components";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -186,28 +188,110 @@ function Writelog({ maxStars = 5, onRatingChange }) {
     const [endDate, setEndDate] = useState(null);
     const [selectedRating, setSelectedRating] = useState(0);
     const [isPublic, setIsPublic] = useState(false);
+    const [quote, setQuote] = useState("");
+    const [content, setContent] = useState("");
+    // const [userId, setUserId] = useState(null);
+
+    // const navigate = useNavigate();
+    const { id } = useParams();
+    const userId = localStorage.getItem("userId");
+    const accessToken = localStorage.getItem("accessToken");
+
+    const [bookData, setBookData] = useState(null);
+
+    // useEffect(()=>{
+    //     const fetchUser = async () => {
+    //         try {
+    //             const response = await axios.get(`/api/users/${id}`);
+    //             setUserId(response.data.id);
+    //         } catch (err) {
+    //             console.error("사용자 정보를 불러오는데 실패했습니다.",err);
+    //             setError("사용자 정보를 불러오는데 실패했습니다.");
+    //         }
+    //     };
+    //     if (id) {
+    //         fetchUser();
+    //     }
+    // },[id]);
+    
+
+    useEffect(() => {
+        const fetchBookData = async () => {
+            try {
+                const { data } = await axios.get(`/api/books/${id}`);
+                console.log(data);
+                setBookData(data);
+            } catch (error) {
+                console.error("책 정보 가져오기 실패 :",error);
+            }
+        };
+        if (id) {
+            fetchBookData();
+        }
+    },[id]);
 
     const handleStarClick = (rating) => {
         setSelectedRating(rating);
         if (onRatingChange) onRatingChange(rating);
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e, type) => {
         const inputValue = e.target.value;
         setCharCount(inputValue.length);
+
+        if (type === "quote") {
+            setQuote(inputValue);
+        } else if (type === "content") {
+            setContent(inputValue);
+        }
     };
 
+    const handleSubmit = async () => {
+        if (!accessToken || !userId) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
+        if (!startDate || !endDate || !quote || !content) {
+            alert("모든 내용을 입력했는지 확인해주세요.");
+            return;
+        }
+
+        const requestBody = {
+            bookId : bookData?.id,
+            rating : selectedRating,
+            quote,
+            content,
+            visibility : isPublic,
+            startDate : startDate.toISOString().split("T")[0],
+            endDate : endDate.toISOString().split("T")[0]
+        };
+
+        console.log(requestBody);
+
+        try {
+            await axios.post(`/api/logs/${userId}`, requestBody, 
+            {
+                headers : {Authorization : `Bearer ${accessToken}`},
+                withCredentials : true,
+            }
+            
+        )
+        } catch (error) {
+            console.error("에러 발생:", error);
+        }
+    };
+    
     return (
         <Main>
             <Container>
                 <BookLogContainer>
                     <ImageContainer>
-                        <Image src={Ad4} alt="Ad4" />
+                        <Image src={bookData?.coverImage || Ad4} alt={bookData?.title || "책이미지"} />
                         <StarContainer>
                             <ContentRow jc="flex-start">
-                                <Text size="23px" mr="15px">빛이 이끄는 곳으로</Text>
+                                <Text size="23px" mr="15px">{bookData?.title || "책 제목"}</Text>
                                 <Text size="19px">|</Text>
-                                <Text ml="15px">백희성</Text>
+                                <Text ml="15px">{bookData?.author || "글쓴이"}</Text>
                             </ContentRow>
                             <ContentRow jc="flex-start">
                                 <Text mr="60px">독서 기간</Text>
@@ -257,6 +341,7 @@ function Writelog({ maxStars = 5, onRatingChange }) {
                             </ContentRow>
                             <Text>기록하고 싶은 글귀</Text>
                             <Input
+                                value={quote}
                                 onChange={handleInputChange}
                                 height="120px"
                                 width="calc(100%-70px)"
@@ -266,7 +351,8 @@ function Writelog({ maxStars = 5, onRatingChange }) {
                     <InputWrapper>
                         <Text ml="20px">Log</Text>
                         <Input
-                            onChange={handleInputChange}
+                            value={content}
+                            onChange={(e)=>handleInputChange(e,"content")}
                             width="calc(100% - 90px)"
                         />
                         <CharCount>
@@ -274,7 +360,7 @@ function Writelog({ maxStars = 5, onRatingChange }) {
                         </CharCount>
                     </InputWrapper>
                     <FlexContainer>
-                        <SubmitButton bgColor="#CCEBFF">저장</SubmitButton>
+                        <SubmitButton bgColor="#CCEBFF" onClick={handleSubmit}>저장</SubmitButton>
                     </FlexContainer>
                 </BookLogContainer>
                 <Footer />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import search from './search.png';
 
@@ -22,11 +22,12 @@ const Container2 = styled.div`
     display: flex;
     flex-direction: column;
     gap: 15px;
+    width : 400px;
 `;
 
 const InputContainer = styled.div`
     position: relative;
-    width: 400px;
+    width: 400px%;
 `;
 
 const Input = styled.input`
@@ -36,9 +37,10 @@ const Input = styled.input`
     border: 2px solid #CCEBFF;
     border-radius: 8px;
     width: 100%;
-    height: 20px;
+    min-height: 40px;
     background-color: white;
     outline: none;
+    box-sizing : border-box; //->height=content+padding+border
 `;
 
 const SearchIcon = styled.img`
@@ -52,11 +54,27 @@ const SearchIcon = styled.img`
 `;
 
 const Category = styled.div`
-    width: 100%;
+    width: 400px;
     background-color: #CCEBFF;
     border-radius: 10px;
     padding: 10px;
     height: 525px;
+    box-sizing : border-box;
+    flex-direction : column;
+`;
+
+const CategoryList = styled.ul`
+    list-style : none;
+    padding : 0;
+`;
+
+const CategoryItem = styled.li`
+    padding : 8px;
+    cursor : pointer;
+    font-weight : ${({active}) => (active ? "bold" : "normal")};
+    &:hover {
+        background:#f0f0f0;
+    };
 `;
 
 const Cardcontainer = styled.div`
@@ -112,7 +130,7 @@ const BookAuthor = styled.p`
 const Pagination = styled.div`
     display: flex;
     justify-content: center;
-    align-items: center;
+    /*align-items: center;*/
     gap: 8px;
     margin-top: 20px; /* ✅ Card 아래에 위치 */
 `;
@@ -130,31 +148,100 @@ const PageButton = styled.button`
     }
 `;
 
+const SuggenstionList = styled.ul`
+    position : absolute;
+    top : 40px;
+    left : 0;
+    width : 100%;
+    background : white;
+    border : 1px solid #ccc;
+    border-radius : 8px;
+    max-height : 200px;
+    overflow-y : auto;
+    z-index : 100;
+`;
+
+const SuggestionItem = styled.li`
+    padding : 10px;
+    cursor : pointer;
+    &:hover {
+        background:#f0f0f0;
+    }
+`;
+
 function Booklog() {
     const [query, setQuery] = useState("");
     const [books, setBooks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [suggestions, setSuggestions] = useState([]);
+    
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const booksPerPage = 12;
 
-    const handleSearch = async () => {
-        if (!query.trim()) return;
-
-        const KEY = process.env.BOOK_API_KEY;
-        const API_URL = `https://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=${KEY}&Query=${query}&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101`;
-
-        try {
-            const response = await fetch(API_URL);
-            const data = await response.json();
-
-            if (data.item) {
-                setBooks(data.item);
-            } else {
-                setBooks([]);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch("/api/categories");
+                const data = await response.json();
+                setCategories(data.categories);
+            } catch(error) {
+                console.error(error);
             }
+        };
+        fetchCategories();
+    },[]);
+
+    useEffect(()=> {
+        if (query.trim() === "") {
+            setSuggestions([]);
+            return;
+        }
+        const fetchSuggestions = async () => {
+            try {
+                const response = await fetch(`/api/books/search?query=${query}`);
+                const data = await response.json();
+                if (data.books) {
+                    setSuggestions(data.books.map(book=>book.title));
+                } 
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        const delayDebounceFn = setTimeout(fetchSuggestions,300);
+        return() => clearTimeout(delayDebounceFn);
+    },[query]);
+
+    const fetchBooks = async () => {
+        try {
+            let url = query 
+                ? `/api/books/search?query=${query}`
+                : selectedCategory
+                    ? `/api/books/category/${selectedCategory}`
+                    : "/api/books";
+            const response = await fetch(url);
+            const data = await response.json();
+            setBooks(data.books || []);
+            setCurrentPage(1);
         } catch (error) {
-            console.error("도서 검색 실패 : ", error);
+            console.error(error);
             setBooks([]);
         }
+    };
+    const handleSearch = () => {
+        fetchBooks();
+    };
+
+    const handleCategoryClick = (categoryId) => {
+        setSelectedCategory(categoryId);
+        setQuery(""); //카테고리 변경 시 검색어 초기화
+        fetchBooks();
+    };
+
+    const handleSuggestionClick = (selectedQuery) => {
+        setQuery(selectedQuery);
+        setSuggestions([]);
+        handleSearch();
     };
 
     const handleKeyPress = (e) => {
@@ -163,27 +250,16 @@ function Booklog() {
         }
     };
 
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     const indexOfLastBook = currentPage * booksPerPage;
     const indexOfFirstBook = indexOfLastBook - booksPerPage;
     const currentBooks = books.slice(indexOfFirstBook, indexOfLastBook);
-
     const totalPages = Math.ceil(books.length / booksPerPage);
 
     const getPageNumbers = () => {
-        const pageNumbers = [];
-        const maxPagesToShow = 5;
-        let startPage = Math.max(1, currentPage - 2);
-        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-        if (endPage - startPage < maxPagesToShow - 1) {
-            startPage = Math.max(1, endPage - maxPagesToShow + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            pageNumbers.push(i);
-        }
-        return pageNumbers;
-    };
+        return [...Array(totalPages).keys()].map(num => num+1);
+    }
 
     return (
         <Container>
@@ -198,9 +274,35 @@ function Booklog() {
                             onChange={(e) => setQuery(e.target.value)}
                             onKeyPress={handleKeyPress}
                         />
+                        {suggestions.length > 0 && (
+                            <SuggenstionList>
+                                {suggestions.map((suggestion, index) => (
+                                    <SuggestionItem key={index} onClick={() => handleSuggestionClick(suggestion)}>
+                                        {suggestion}
+                                    </SuggestionItem>
+                                ))}
+                            </SuggenstionList>
+                        )}
                     </InputContainer>
                     <Category>
-                        <h6>전체</h6>
+                        <h6>카테고리</h6>
+                        <CategoryList>
+                            <CategoryItem   
+                                onClick={()=>handleCategoryClick(null)}
+                                active={selectedCategory === null}>
+                                    전체
+                            </CategoryItem>
+                            {categories.map((category) => (
+                                <CategoryItem
+                                    key={category.id}
+                                    onClick={() => handleCategoryClick(category.id)}
+                                    active={selectedCategory === category.id}
+                                >
+                                    {category.name}
+                                </CategoryItem>
+                            ))}
+                            
+                        </CategoryList>
                     </Category>
                 </Container2>
                 <Cardcontainer>
@@ -208,10 +310,10 @@ function Booklog() {
                         <BookList>
                             {currentBooks.map((book) => (
                                 <BookCard key={book.isbn}>
-                                <BookImage src={book.cover} alt={book.title} />
-                                <BookTitle>{book.title}</BookTitle>
-                                <BookAuthor>{book.author}</BookAuthor>
-                            </BookCard>
+                                    <BookImage src={book.coverImage} alt={book.title} />
+                                    <BookTitle>{book.title}</BookTitle>
+                                    <BookAuthor>{book.author}</BookAuthor>
+                                </BookCard>
                             ))}
                         </BookList>
                     </Card>
@@ -220,7 +322,11 @@ function Booklog() {
             <Pagination>
                 <PageButton onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>◀</PageButton>
                 {getPageNumbers().map((number) => (
-                    <PageButton key={number} active={number === currentPage} onClick={() => setCurrentPage(number)}>
+                    <PageButton 
+                        key={number} 
+                        active={number === currentPage}
+                        onClick={() => setCurrentPage(number)}
+                    >
                         {number}
                     </PageButton>
                 ))}
