@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import { Button, SubmitButton } from "../component/Button";
 
 const Container = styled.div`
@@ -61,20 +62,38 @@ const Logcontainer = styled.div`
 
 function Bookdetail() {
     const navigate = useNavigate();
+    const { id } = useParams();
 
     const navigateToWritelog = () => {
         navigate("/writelog");
     }
+
+    const [bookData, setBookData] = useState(null);
+
+    useEffect(() => {
+        const fetchBookData = async () => {
+            try {
+                const { data } = await axios.get(`/api/books/${id}`);
+                setBookData(data);
+            } catch (error) {
+                console.error("책 정보 가져오기 실패 :",error);
+            }
+        };
+        if (id) {
+            fetchBookData();
+        }
+    },[id]);
+
     return (
         <Container>
             <Detail>
                 <Cardcontainer>
                     <Image />
                     <Bookcontainer>
-                        <Text size="20px" mt="30px">빛이 이끄는 곳으로</Text>
-                        <Text size="13px">저자 정보</Text>
-                        <Text size="13px">출판사</Text>
-                        <Text size="13px">장르</Text>
+                        <Text size="20px" mt="30px">{bookData?.title}</Text>
+                        <Text size="13px">{bookData?.author}</Text>
+                        <Text size="13px">{bookData.publisher}</Text>
+                        <Text size="13px">{bookData.category}</Text>
                     </Bookcontainer>
                 </Cardcontainer>
             </Detail>
@@ -84,7 +103,7 @@ function Bookdetail() {
             </Logcontainer>
             
         </Container>
-    )
+    );
 
 }
 export default Bookdetail;
