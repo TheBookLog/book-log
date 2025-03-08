@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import logo from "./logo.png";
 import Modal from "../component/Modal";
@@ -107,18 +107,49 @@ const ModalButtonContainer = styled.div`
     margin-top: 10px;
 `;
 
+const ErrorText = styled.p`
+    color : red;
+    font-size : 14px;
+    margin-top : 5px;
+`;
+
 function AddInformation() {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const kakaoId = location.state?.kakaoId || null;
     const [formData, setFormData] = useState({
         nickname: "",
         gender: "",
         ageGroup: "",
     });
 
+    const [nicknameError, setNicknameError] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    const closeModal = useCallback(() => {
+        setIsModalOpen(false);
+    },[]);
+    
+    useEffect(() => {
+        if (formData.nickname.trim() === "") {
+            setNicknameError(false);
+            return;
+        }
+
+        const checkNickname = setTimeout(async () => {
+            try {
+                const response = await axios.get(
+                    `http://localhost:8080/api/users/check-username?username=${formData.nickname}`
+                );
+                setNicknameError(response.data.exists);
+            } catch (error) {
+                console.error("닉네임 중복 확인 오류:", error);
+            }
+        }, 500);
+        return() => clearTimeout(checkNickname);
+    },[formData.nickname]);
 
     const handleChange = (e) => {
         setFormData({
@@ -143,21 +174,23 @@ function AddInformation() {
     
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (nicknameError) {
+            openModal();
+            return;
+        }
         
         try { //쿠키에서 토큰 가져오기
-            const checkResponse = await axios.get(`http://localhost:8080/api/users/check-username?username=${formData.nickname}`);
-            if (checkResponse.data.exists) {
-                openModal();
-                return;
-            }
             const accessToken = localStorage.getItem("accessToken");
             if (!accessToken) {
-                console.error("JWT 토큰 없음");
+                console.error("인증 정보 없음");
+                navigate("/login");
                 return;
             }
-            const userId = localStorage.getItem("userId");
+            let userId = kakaoId || localStorage.getItem("userId");
             if (!userId) {
-                console.error("사용자 ID 없음");
+                console.error("사용자 정보 없음");
+                navigate("/login");
                 return;
             }
             const response = await axios.put(
@@ -171,11 +204,11 @@ function AddInformation() {
                     headers : {Authorization : `Bearer ${accessToken}`},
                     withCredentials : true,
                 }
+
             );
             console.log("사용자 정보 업데이트 성공 : ",response.data);
             navigate("/home");
         }
-
         catch (error) {
             console.log("사용자 정보 업데이트 실패 : ", error);
         }
@@ -204,6 +237,9 @@ function AddInformation() {
                             onChange={handleChange}
                             required
                         />
+                        {nicknameError && (
+                            <ErrorText>이미 사용 중인 닉네임입니다.</ErrorText>
+                        )}
                     </div>
                     <div>
                         <Label>성별</Label>
