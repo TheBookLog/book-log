@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import "./index.css";
 import Header from './header/Header';
 import Login from './login/Login';
 import Redirect from "./login/Redirect";
