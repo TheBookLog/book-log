@@ -309,7 +309,7 @@ function Mypage() {
                                     </ModalButtonContainer>
                                 </ModalContent>
                             </Modal>
-                        <SubmitButton bgColor="#CCEBFF">수정하기</SubmitButton>
+                        <SubmitButton bgColor="#CCEBFF">수정</SubmitButton>
                     </ButtonContainer>
                 </FormContainer>
             
