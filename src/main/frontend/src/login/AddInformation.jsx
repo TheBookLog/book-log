@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import logo from "./logo.png";
 import Modal from "../component/Modal";
 import { Button, SubmitButton } from "../component/Button";
+import axios from "axios";
 
 const Container = styled.div`
     display: flex;
@@ -105,32 +107,115 @@ const ModalButtonContainer = styled.div`
     margin-top: 10px;
 `;
 
+const ErrorText = styled.p`
+    color : red;
+    font-size : 14px;
+    margin-top : 5px;
+`;
+
 function AddInformation() {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const kakaoId = location.state?.kakaoId || null;
     const [formData, setFormData] = useState({
-        ninkname: "",
+        nickname: "",
         gender: "",
         ageGroup: "",
     });
 
+    const [nicknameError, setNicknameError] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = useCallback(() => {
+        setIsModalOpen(false);
+    },[]);
+    
+    useEffect(() => {
+        if (formData.nickname.trim() === "") {
+            setNicknameError(false);
+            return;
+        }
+
+        const checkNickname = setTimeout(async () => {
+            try {
+                const response = await axios.get(
+                    `http://localhost:8080/api/users/check-username?username=${formData.nickname}`
+                );
+                setNicknameError(response.data.exists);
+            } catch (error) {
+                console.error("닉네임 중복 확인 오류:", error);
+            }
+        }, 500);
+        return() => clearTimeout(checkNickname);
+    },[formData.nickname]);
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name] : e.target.value,
+        });
+    };
+
     const handleGenderClick = (gender) => {
-        setFormData({ ...formData, gender });
+        setFormData((prevData) => ({
+            ...prevData,
+            gender,
+        }));
     };
 
     const handleAgeGroupClick = (ageGroup) => {
-        setFormData({ ...formData, ageGroup });
+        setFormData((prevData) => ({
+            ...prevData,
+            ageGroup,
+        }));
     };
-
-    const handleSubmit = (e) => {
+    
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted: ", formData);
-        alert("성공적으로 제출되었습니다.");
-        // 백엔드 로직
+
+        if (nicknameError) {
+            openModal();
+            return;
+        }
+        
+        try { //쿠키에서 토큰 가져오기
+            const accessToken = localStorage.getItem("accessToken");
+            if (!accessToken) {
+                console.error("인증 정보 없음");
+                navigate("/login");
+                return;
+            }
+            let userId = kakaoId || localStorage.getItem("userId");
+            if (!userId) {
+                console.error("사용자 정보 없음");
+                navigate("/login");
+                return;
+            }
+            const response = await axios.put(
+                `http://localhost:8080/api/users/${userId}`,
+                {
+                    nickname : formData.nickname,
+                    gender : formData.gender,
+                    ageGroup : formData.ageGroup,
+                },
+                {
+                    headers : {Authorization : `Bearer ${accessToken}`},
+                    withCredentials : true,
+                }
+
+            );
+            console.log("사용자 정보 업데이트 성공 : ",response.data);
+            navigate("/home");
+        }
+        catch (error) {
+            console.log("사용자 정보 업데이트 실패 : ", error);
+        }
     };
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    
     const [backColor, setBackColor] = useState("rgba(0, 0, 0, 0.2)");
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
 
     return (
         <Container>
@@ -148,10 +233,13 @@ function AddInformation() {
                             type="text"
                             id="nickname"
                             name="nickname"
-                            value={formData.ninkname}
-                            onChange={(e) => setFormData({ ...formData, ninkname: e.target.value })}
+                            value={formData.nickname}
+                            onChange={handleChange}
                             required
                         />
+                        {nicknameError && (
+                            <ErrorText>이미 사용 중인 닉네임입니다.</ErrorText>
+                        )}
                     </div>
                     <div>
                         <Label>성별</Label>
@@ -190,8 +278,8 @@ function AddInformation() {
 
                     {/* <SubmitButton type="submit">제출</SubmitButton> */}
                     <ButtonContainer>
-                        <SubmitButton bgColor="#D9D9D9">나중에 하기</SubmitButton>
-                        <SubmitButton bgColor="#CCEBFF" onClick={openModal}>저장</SubmitButton>
+                        <SubmitButton bgColor="#D9D9D9" type="button" onClick={()=>navigate("/home")}>나중에 하기</SubmitButton>
+                        <SubmitButton bgColor="#CCEBFF" type="submit">저장</SubmitButton>
                         <Modal isOpen={isModalOpen} closeModal={closeModal}>
                             <ModalContent>
                                 <p>이미 사용중인 닉네임입니다.</p>

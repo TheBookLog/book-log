@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import logo from "./logo.png";
-import { useNavigate } from "react-router-dom";
 import kakao_login from "./kakao_login.png";
 
 const Container = styled.div`
@@ -52,13 +51,13 @@ const Image = styled.img`
     margin-top : 10px;
 `;
 function Login() {
-    const navigate = useNavigate();
+    const REACT_APP_K_REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
+    const K_REDIRECT_URI = `http://localhost:8080/api/auth/kakao-login/callback`;
+    // const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${K_REST_API_KEY}&redirect_uri=${K_REDIRECT_URI}&response_type=code`;
 
-    const K_REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
-    const K_REDIRECT_URI = `https://localhost:3000:redirect`;
-    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${K_REST_API_KEY}&redirect_uri=${K_REDIRECT_URI}&response_type=code`;
-
+    console.log(process.env.REACT_APP_REST_API_KEY);
     const redirect = () => {
+        const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REACT_APP_K_REST_API_KEY}&redirect_uri=${K_REDIRECT_URI}&response_type=code`;
         window.location.href = KAKAO_AUTH_URL;
     }
 
