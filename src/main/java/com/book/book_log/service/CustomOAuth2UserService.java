@@ -28,24 +28,32 @@ public class CustomOAuth2UserService {
     @Transactional
     public UserResponseDTO processOAuth2User(OAuth2AuthenticationToken authenticationToken, OAuth2AccessToken accessToken) {
         Map<String, Object> attributes = authenticationToken.getPrincipal().getAttributes();
+        System.out.println("✅ OAuth2 Attributes: " + attributes);
 
         OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
                 authenticationToken.getAuthorizedClientRegistrationId(),
                 authenticationToken.getName()
         );
         ClientRegistration clientRegistration = authorizedClient.getClientRegistration();
-        String provider = clientRegistration.getRegistrationId().toUpperCase(); // "KAKAO", "NAVER" 등
+        String provider = clientRegistration.getRegistrationId().toUpperCase();
         OAuthProvider oauthProvider = OAuthProvider.valueOf(provider);
 
         String oauthId = attributes.get("id").toString();
-        String username = attributes.containsKey("profile_nickname")
-                ? attributes.get("profile_nickname").toString()
-                : "UNKNOWN";
 
-        // 1. 기존 사용자 조회
+        // username 추출 (kakao_account.profile.nickname)
+        String username = "UNKNOWN";
+        try {
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+            username = profile.get("nickname").toString();
+        } catch (Exception e) {
+            System.err.println("카카오 닉네임 추출 실패: " + e.getMessage());
+        }
+
+        // 기존 사용자 조회
         User user = uRepo.findByOauthIdAndOauthProvider(oauthId, oauthProvider).orElse(null);
 
-        // 2. 최초 로그인이라면 사용자 등록
+        // 최초 로그인이라면 사용자 등록
         if (user == null) {
             user = new User();
             user.setOauthId(oauthId);
@@ -54,7 +62,7 @@ public class CustomOAuth2UserService {
             user.setAgeGroup(AgeGroup.UNKNOWN);
             user.setOauthProvider(oauthProvider);
             user.setOauthToken(accessToken.getTokenValue());
-            user.setRefreshToken(accessToken.getTokenValue()); // 추후 refresh token 분리 가능
+            user.setRefreshToken(accessToken.getTokenValue());
             user.setExpiresAt(accessToken.getExpiresAt().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
             user = uRepo.save(user);
