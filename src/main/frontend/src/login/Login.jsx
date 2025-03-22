@@ -52,13 +52,10 @@ const Image = styled.img`
 `;
 function Login() {
     const REACT_APP_K_REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
-    const K_REDIRECT_URI = `http://localhost:8080/api/auth/kakao-login/callback`;
-    // const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${K_REST_API_KEY}&redirect_uri=${K_REDIRECT_URI}&response_type=code`;
 
     console.log(process.env.REACT_APP_REST_API_KEY);
     const redirect = () => {
-        const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REACT_APP_K_REST_API_KEY}&redirect_uri=${K_REDIRECT_URI}&response_type=code`;
-        window.location.href = KAKAO_AUTH_URL;
+        window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
     }
 
     return (
