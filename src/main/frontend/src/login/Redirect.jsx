@@ -1,47 +1,29 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 function Redirect() {
     const navigate = useNavigate();
+
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get("code");     
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+        const userId = params.get("userId");
 
-        if (code) {
-            axios
-                .post("http://localhost:8080/api/auth/kakao-login/callback", { code }, { withCredentials : true})
-                .then((response) => {
-                    console.log("로그인 성공: ", response.data);
-
-                    const { isNewUSer, kakaoId } = response.data;
-
-                    if (!isNewUSer) {
-                        axios
-                            .post("http://localhost:8080/api/auth/issue-token", { kakaoId }, { withCredentials : true })
-                            .then((jwtResponse) => {
-                                console.log("JWT 발급 성공 : ", jwtResponse.data);
-                                localStorage.setItem("accessToken", jwtResponse.data.accessToken);
-                                localStorage.setItem("userId", jwtResponse.data.userId);
-                                navigate("/home");
-                            })
-                            .catch((jwtError) => {
-                                console.error("JWT 발급 실패:", jwtError);
-                            });
-                    } else {
-                        navigate("/addinformation", { state : {kakaoId}});
-                    }
-                })
-                .catch((error) => {
-                    console.error("로그인 실패: ", error);
-                });
+        if (token && userId) {
+            localStorage.setItem("accessToken", token);
+            localStorage.setItem("userId", userId);
+            navigate("/home");  // 홈이나 원하는 페이지로 이동
+        } else {
+            console.error("카카오 로그인 실패 또는 토큰 누락");
+            navigate("/login"); // 실패 시 로그인 페이지로 리다이렉션
         }
     }, [navigate]);
-    
+
     return (
         <div>
-            로그인 중입니다.
+            로그인 중입니다...
         </div>
-    )
+    );
 }
+
 export default Redirect;

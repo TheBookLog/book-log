@@ -19,7 +19,7 @@ public class UserService {
 
     // 사용자 조회
     public UserResponseDTO getUserById(String id) {
-        User user =  uRepo.findById(id)
+        User user = uRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
         return toResponseDTO(user);
     }
@@ -27,13 +27,21 @@ public class UserService {
     // 사용자 정보 업데이트
     public UserResponseDTO updateUser(String id, UserRequestDTO dto) {
         User user = uRepo.findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-        user.setUsername(dto.getUsername());
-        user.setGender(Gender.valueOf(dto.getGender().toUpperCase())); // String -> ENUM
-        user.setAge_group(AgeGroup.valueOf(dto.getAgeGroup().toUpperCase())); //String -> ENUM
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
-        User updatedUser = uRepo.save(user);
-        return toResponseDTO(updatedUser); // User -> DTO 변환
+        if (dto.getUsername() != null) {
+            user.setUsername(dto.getUsername());
+        }
+
+        if (dto.getGender() != null) {
+            user.setGender(Gender.valueOf(dto.getGender().toUpperCase()));
+        }
+
+        if (dto.getAgeGroup() != null) {
+            user.setAgeGroup(AgeGroup.valueOf(dto.getAgeGroup().toUpperCase()));
+        }
+
+        return toResponseDTO(user);
     }
 
     // 사용자 삭제
@@ -54,9 +62,9 @@ public class UserService {
         return new UserResponseDTO(
                 user.getId(),
                 user.getUsername(),
-                user.getGender() != null ? user.getGender().toString() : null, // ENUM -> String
-                user.getAge_group() != null ? user.getAge_group().toString() : null, // ENUM -> String
-                user.getOauth_provider().toString() // ENUM -> String
+                user.getGender() != null ? user.getGender().toString() : null,
+                user.getAgeGroup() != null ? user.getAgeGroup().toString() : null,
+                user.getOauthProvider().toString()
         );
     }
 }
