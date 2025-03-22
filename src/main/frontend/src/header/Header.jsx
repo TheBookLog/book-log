@@ -62,7 +62,7 @@ function Header() {
     }, []);
 
     const navigateToHome = () => {
-        navigate("/home");
+        navigate("/");
     };
 
     const navigateToBookLog = () => {

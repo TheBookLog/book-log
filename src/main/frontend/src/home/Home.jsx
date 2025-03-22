@@ -2,6 +2,9 @@ import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import styled from "styled-components";
+import Group130 from "./Group130.png";
+import Group131 from "./Group131.png";
+import Group132 from "./Group132.png";
 import Ad1 from "./Ad1.PNG";
 import Ad2 from "./Ad2.PNG";
 import Ad3 from "./Ad3.jpg";
@@ -72,14 +75,14 @@ const Pre = styled.div`
     width: 30px;
     height: 30px;
     position: absolute;
-    left: 5%;
+    left: 15px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 3;
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
-    color: black;
+    color: white;
     cursor: pointer;
 `;
 
@@ -87,13 +90,14 @@ const NextTo = styled.div`
     width: 30px;
     height: 30px;
     position: absolute;
-    right: 5%;
+    right: 0;
     top: 50%;
     transform: translateY(-50%);
     z-index: 3;
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
+    color : white;
     cursor: pointer;
 `;
 
@@ -162,8 +166,8 @@ const sliderSettings = {
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: true,
-    prevArrow: <Pre>{"<"}</Pre>,
-    nextArrow: <NextTo>{">"}</NextTo>,
+    prevArrow: <Pre className="arrow">{"<"}</Pre>,
+    nextArrow: <NextTo className="arrow">{">"}</NextTo>,
 };
 
 const contentSliderSettings = {
@@ -189,10 +193,13 @@ function Home() {
                 <AdSliderContainer>
                     <StyledSlider {...sliderSettings}>
                         <div>
-                            <AdImage src={Ad1} alt="Ad1" />
+                            <AdImage src={Group130} alt="Group130" />
                         </div>
                         <div>
-                            <AdImage src={Ad2} alt="Ad2" />
+                            <AdImage src={Group131} alt="Group131" />
+                        </div>
+                        <div>
+                            <AdImage src={Group132} alt="Group132" />
                         </div>
                     </StyledSlider>
                 </AdSliderContainer>
