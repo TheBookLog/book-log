@@ -35,26 +35,30 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private AgeGroup age_group;
+    private AgeGroup ageGroup;
+
+    @Column(length = 50, nullable = false, unique = true)
+    @NotNull(message = "OAuth ID cannot be null")
+    private String oauthId;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
+    @Column(name = "oauth_provider", length = 20, nullable = false)
     @NotNull(message = "OAuth provider cannot be null")
-    private OAuthProvider oauth_provider;
+    private OAuthProvider oauthProvider;
 
     @Lob
-    @Column(nullable = false)
-    @NotNull(message = "Oauth token cannot be null")
-    private String oauth_token;
+    @Column(name = "oauth_token", nullable = false)
+    @NotNull(message = "OAuth token cannot be null")
+    private String oauthToken;
 
     @Lob
-    @Column(nullable = false)
+    @Column(name = "refresh_token", nullable = false)
     @NotNull(message = "Refresh token cannot be null")
-    private String refresh_token;
+    private String refreshToken;
 
-    @Column(nullable = false)
+    @Column(name = "expires_at", nullable = false)
     @NotNull(message = "Token expiration date cannot be null")
-    private LocalDateTime expires_at;
+    private LocalDateTime expiresAt;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
