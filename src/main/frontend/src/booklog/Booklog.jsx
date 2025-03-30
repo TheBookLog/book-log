@@ -184,7 +184,8 @@ function Booklog() {
             try {
                 const response = await fetch("/api/categories");
                 const data = await response.json();
-                setCategories(data.categories);
+                console.log("카테고리 응답 확인: ", data);
+                setCategories(data);
             } catch(error) {
                 console.error(error);
             }
