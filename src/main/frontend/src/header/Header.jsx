@@ -4,6 +4,8 @@ import logo from "./logo.png";
 import image1 from "./image1.png"; // 로그인된 경우
 import image from "./image.png";   // 로그인되지 않은 경우
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { login, logout} from "../redux/authSlice";
 
 const Container = styled.div`
     display: flex;
@@ -19,7 +21,7 @@ const Container = styled.div`
 `;
 
 const Image = styled.img`
-    width: ${(props) => (props.isLoggedIn ? "35px" : "55px")};
+    width: ${(props) => (props.isLoggedIn ? "35px" : "30px")};
     height: 35px;
     position: absolute;
     top: 13px;
@@ -51,15 +53,24 @@ const NavLink = styled.div`
 
 function Header() {
     const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const dispatch = useDispatch();
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+    const [localStorageToken, setLocalStorageToken] = useState(localStorage.getItem("accessToken"));
 
     useEffect(() => {
         // 로그인 여부를 LocalStorage에서 확인
         const accessToken = localStorage.getItem("accessToken");
+        setLocalStorageToken(accessToken);
+
+        console.log("현재 토큰:", accessToken);
+        console.log("redux 상태 : ", isLoggedIn);
+
         if (accessToken) {
-            setIsLoggedIn(true);
+            dispatch(login());
+        } else {
+            dispatch(logout());
         }
-    }, []);
+    }, [dispatch, localStorageToken]);
 
     const navigateToHome = () => {
         navigate("/");
@@ -75,7 +86,7 @@ function Header() {
 
     // 카카오 로그인 리디렉트 함수
     const redirectToKakaoLogin = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
+        window.location.href = "http://localhost:8080/login/oauth2/code/kakao";
     };    
 
     const handleImageClick = () => {

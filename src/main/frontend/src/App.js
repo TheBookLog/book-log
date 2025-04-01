@@ -20,7 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route path="/login" element={<Login />}></Route>
-        <Route path="/redirect" element={<Redirect />}></Route>
+        <Route path="/oauth/kakao/success" element={<Redirect />}></Route>
         <Route path="/addinformation" element={<AddInformation />}></Route>
         <Route path="/booklog" element={<Booklog />}></Route>
         <Route path="/mypage" element={<Mypage />}></Route>
