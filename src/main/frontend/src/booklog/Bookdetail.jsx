@@ -67,7 +67,7 @@ const Label = styled.span`
 
 const Value = styled.span`
     font-size : 15px;
-    text-align : right : 
+    text-align : right;
     flex-grow : 1;
 `;
 
@@ -136,10 +136,10 @@ const LogAuthor = styled.div`
 
 function Bookdetail() {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const { isbn } = useParams();
 
     const navigateToWritelog = () => {
-        navigate(`/writelog/${id}`);
+        navigate(`/writelog/${isbn}`);
     }
 
     const [bookData, setBookData] = useState(null);
@@ -149,7 +149,8 @@ function Bookdetail() {
     useEffect(() => {
         const fetchBookData = async () => {
             try {
-                const { data } = await axios.get(`/api/books/${id}`);
+                const { data } = await axios.get(`/api/books/${isbn}`);
+                console.log("책데이터 : ", data);
                 setBookData(data); //setBookData(data)가 실행되면서 bookData 상태 값이 위의 객체로 설정됨.
             } catch (error) {
                 console.error("책 정보 가져오기 실패 :",error);
@@ -159,18 +160,18 @@ function Bookdetail() {
 
         const fetchBookLogs = async () => {
             try {
-                const { data } = await axios.get(`/api/logs/book/${id}`);
+                const { data } = await axios.get(`/api/logs/book/${isbn}`);
                 console.log(data);
                 setLogs(data);
             } catch (error) {
                 console.error("Log 가져오기 실패:",error);
             }
         }
-        if (id) {
+        if (isbn) {
             fetchBookData();
             fetchBookLogs();
         }
-    },[id]);
+    },[isbn]);
 
     const totalLogs = logs.length;
     const averageRating = bookData?.averageRating
@@ -182,7 +183,7 @@ function Bookdetail() {
             <DetailWrapper>
                 <Detail>
                     <Cardcontainer>
-                        <Image src={bookData?.coverImage} alt={bookData?.title}/>
+                        <Image src={bookData?.cover} alt={bookData?.title}/>
                         <Bookcontainer>
                             <InfoRow>
                                 <Label>저자 정보</Label>

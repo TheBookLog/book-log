@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import search from './search.png';
 
@@ -27,7 +28,7 @@ const Container2 = styled.div`
 
 const InputContainer = styled.div`
     position: relative;
-    width: 400px%;
+    width: 400px;
 `;
 
 const Input = styled.input`
@@ -79,15 +80,18 @@ const CategoryItem = styled.li`
 
 const Cardcontainer = styled.div`
     flex-direction : column;
+    flex : 1;
     display : flex;
     justify-content : center;
     align-items : center;
+    max-height : 550px;
 `;
 
 const Card = styled.div`
-    width: 950px;
+    width:100%;
+    max-width : 950px;
     background-color: #EBF1F5;
-    height: 550px;
+    height: 100%;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
@@ -100,6 +104,7 @@ const BookList = styled.div`
     grid-template-rows: repeat(3, auto);
     gap: 15px;
     padding: 20px;
+    height : 100%;
 `;
 
 const BookCard = styled.div`
@@ -112,7 +117,7 @@ const BookCard = styled.div`
 
 const BookImage = styled.img`
     width: 100%;
-    height: 200px;
+    height: 150px;
     object-fit: cover;
     border-radius: 8px;
 `;
@@ -159,6 +164,10 @@ const SuggenstionList = styled.ul`
     max-height : 200px;
     overflow-y : auto;
     z-index : 100;
+    box-shadow : 0 2px 8px rgba(0,0,0,0.15);
+    list-style : none;
+    padding : 0;
+    margin : 0;
 `;
 
 const SuggestionItem = styled.li`
@@ -170,11 +179,13 @@ const SuggestionItem = styled.li`
 `;
 
 function Booklog() {
+    const navigate = useNavigate();
     const [query, setQuery] = useState("");
     const [books, setBooks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [suggestions, setSuggestions] = useState([]);
-    
+    const [suggestionsVisible, setSuggestionsVisible] = useState(false);
+
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const booksPerPage = 12;
@@ -202,11 +213,19 @@ function Booklog() {
             try {
                 const response = await fetch(`/api/books/search?query=${query}`);
                 const data = await response.json();
-                if (data.books) {
-                    setSuggestions(data.books.map(book=>book.title));
-                } 
+                const books = data.books || data.item || [];
+
+                if (books.length > 0) {
+                    const filtererdSuggestions = books  
+                        .filter(book => book.title && book.title.toLowerCase().includes(query.toLowerCase()))
+                        .map(book => book.title);
+                    setSuggestions([...new Set(filtererdSuggestions)]);
+                }
+                // if (data.books) {
+                //     setSuggestions(data.books.map(book=>book.title));
+                // } 
             } catch (error) {
-                console.error(error);
+                console.error("연관검색어 오류 : ",error);
             }
         };
         const delayDebounceFn = setTimeout(fetchSuggestions,300);
@@ -222,10 +241,19 @@ function Booklog() {
                     : "/api/books";
             const response = await fetch(url);
             const data = await response.json();
-            setBooks(data.books || []);
+
+            let fetchedBooks = data.books || data.item || [];
+
+            if (query) {
+                const lowerQuery = query.toLowerCase();
+                fetchedBooks = fetchedBooks.filter(book =>
+                    book.title && book.title.toLowerCase().includes(lowerQuery)
+                );
+            }
+            setBooks(fetchedBooks);
             setCurrentPage(1);
         } catch (error) {
-            console.error(error);
+            console.error("도서 검색 오류 : " ,error);
             setBooks([]);
         }
     };
@@ -239,10 +267,29 @@ function Booklog() {
         fetchBooks();
     };
 
-    const handleSuggestionClick = (selectedQuery) => {
+    const handleSuggestionClick = async(selectedQuery) => {
         setQuery(selectedQuery);
         setSuggestions([]);
-        handleSearch();
+
+        try {
+            const response = await fetch(`/api/books/search?query=${selectedQuery}`);
+            const data = await response.json();
+            const books = data.books || data.item || [];
+
+            
+
+            const exactMatch = books.find(book => book.title === selectedQuery);
+            if (exactMatch) {
+                setBooks([exactMatch]);
+            } else {
+                setBooks([]);
+            }
+            setCurrentPage(1);
+        } catch (error) {
+            console.error("도서 단일 검색 오류 : ",error);
+            setBooks([]);
+        }
+        // handleSearch();
     };
 
     const handleKeyPress = (e) => {
@@ -274,8 +321,10 @@ function Booklog() {
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             onKeyPress={handleKeyPress}
+                            onFocus={()=> setSuggestionsVisible(true)}
+                            onBlur={()=>setTimeout(()=> setSuggestionsVisible(false), 100)}
                         />
-                        {suggestions.length > 0 && (
+                        {suggestionsVisible && suggestions.length > 0 && (
                             <SuggenstionList>
                                 {suggestions.map((suggestion, index) => (
                                     <SuggestionItem key={index} onClick={() => handleSuggestionClick(suggestion)}>
@@ -310,8 +359,13 @@ function Booklog() {
                     <Card>
                         <BookList>
                             {currentBooks.map((book) => (
-                                <BookCard key={book.isbn}>
-                                    <BookImage src={book.coverImage} alt={book.title} />
+                                <BookCard
+                                    key={book.isbn}
+                                    onClick={()=> {
+                                        console.log("Clicked Book : ", book);
+                                        navigate(`/bookdetail/${book.isbn}`);
+                                    }}>
+                                    <BookImage src={book.cover} alt={book.title} />
                                     <BookTitle>{book.title}</BookTitle>
                                     <BookAuthor>{book.author}</BookAuthor>
                                 </BookCard>
