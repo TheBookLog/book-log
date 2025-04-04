@@ -25,7 +25,7 @@ function App() {
         <Route path="/booklog" element={<Booklog />}></Route>
         <Route path="/mypage" element={<Mypage />}></Route>
         <Route path="/writelog" element={<Writelog />}></Route>
-        <Route path="/bookdetail" element={<Bookdetail />}></Route>
+        <Route path="/bookdetail/:isbn" element={<Bookdetail />}></Route>
       </Routes>
     </BrowserRouter>
   );
