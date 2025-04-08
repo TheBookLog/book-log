@@ -5,6 +5,8 @@ import image from "./image.png";
 import Modal from "../component/Modal";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, SubmitButton } from "../component/Button";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/authSlice";
 
 const Container = styled.div`
     display : flex;
@@ -21,7 +23,7 @@ const Text = styled.h5`
     margin : 2px 0;
     margin-top : ${( props ) => props.mt || "0px"};
     margin-bottom : ${( props ) => props.mb || "0px"};
-    cursor : ${( props ) => props.cs || "none"};
+    cursor : ${( props ) => props.cs || "pointer"};
 `;
 
 const Main = styled.div`
@@ -124,6 +126,7 @@ const ModalButtonContainer = styled.div`
 
 function Mypage() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { id } = useParams();
 
     const [formData, setFormData ] = useState({
@@ -176,21 +179,13 @@ function Mypage() {
     };
 
     const handleLogout = async () => {
-        try {
-            const response = await fetch("api/auth/logout", {
-                method : "POST",
-                credentials : "include",
-            });
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("userId");
 
-            if (response.ok) {
-                alert("로그아웃되었습니다.");
-                navigate("/home");
-            } else {
-                alert("로그아웃 실패");
-            }
-        } catch (error) {
-            console.error("Logout : ", error);
-        }
+        dispatch(logout());
+
+        alert("로그아웃되었습니다.");
+        navigate("/");
     }
 
     const handleDeleteAccount = async (e) => {
@@ -243,14 +238,14 @@ function Mypage() {
         <Container>
             <Header />
             <Main>
-                <Text size="25px">
+                <Text size="25px" cs="pointer">
                     My Page
                 </Text>
                 <Main2>
-                    <Text mt="13px">프로필 관리</Text>
+                    <Text mt="13px" cs="pointer">프로필 관리</Text>
                     <Center width="18px" height="18px" mt="14px" ml="3px" src={image} alt="관리" />
                 </Main2>
-                <Text mt="3px" onClick={handleLogout}>로그아웃</Text>
+                <Text mt="3px" cs="pointer" onClick={handleLogout}>로그아웃</Text>
             </Main>
                 <Div>
                     <Center mt="10px" src={image1} alt="회원" />
