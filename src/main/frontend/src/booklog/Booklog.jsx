@@ -59,7 +59,7 @@ const Category = styled.div`
     background-color: #CCEBFF;
     border-radius: 10px;
     padding: 10px;
-    height: 525px;
+    height: 560px;
     box-sizing : border-box;
     flex-direction : column;
 `;
@@ -84,52 +84,59 @@ const Cardcontainer = styled.div`
     display : flex;
     justify-content : center;
     align-items : center;
-    max-height : 550px;
 `;
 
 const Card = styled.div`
     width:100%;
     max-width : 950px;
     background-color: #EBF1F5;
-    height: 100%;
+    min-height: 500px;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow : hidden;
 `;
 
 const BookList = styled.div`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(3, auto);
+    grid-template-rows: repeat(4, auto);
     gap: 15px;
     padding: 20px;
     height : 100%;
 `;
 
 const BookCard = styled.div`
-    background: white;
-    border-radius: 10px;
     padding: 10px;
     text-align: center;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    
 `;
 
 const BookImage = styled.img`
     width: 100%;
-    height: 150px;
-    object-fit: cover;
+    height: 140px;
+    object-fit: contain;
     border-radius: 8px;
+    background-color : transparent;
 `;
 
 const BookTitle = styled.h4`
-    font-size: 14px;
+    font-size: 13px;
     margin: 10px 0 5px;
+    white-space : normal;
+    overflow : hidden;
+    display : -webkit-box;
+    -webkit-line-clamp : 1;
+    -webkit-box-orient : vertical;
+    text-overflow : ellipsis;
+    word-break : break-word;
 `;
 
 const BookAuthor = styled.p`
     font-size: 12px;
     color: gray;
+    text-align : center;
 `;
 
 const Pagination = styled.div`
@@ -205,6 +212,10 @@ function Booklog() {
     },[]);
 
     useEffect(()=> {
+        fetchBooks();
+    },[selectedCategory]);
+
+    useEffect(()=> {
         if (query.trim() === "") {
             setSuggestions([]);
             return;
@@ -252,6 +263,7 @@ function Booklog() {
             }
             setBooks(fetchedBooks);
             setCurrentPage(1);
+            console.log("불러온 책 개수:",fetchedBooks.length);
         } catch (error) {
             console.error("도서 검색 오류 : " ,error);
             setBooks([]);
