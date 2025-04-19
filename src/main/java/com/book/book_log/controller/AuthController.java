@@ -37,8 +37,8 @@ public class AuthController {
             String jwt = JwtUtil.generateToken(user.getId());
 
             // 프론트엔드로 JWT와 userId를 쿼리스트링으로 전달
-            String redirectUrl = String.format("http://localhost:3000/oauth/kakao/success?token=%s&userId=%s",
-                    jwt, user.getId());
+            String redirectUrl = String.format("http://localhost:3000/oauth/kakao/success?token=%s&userId=%s&isNew=%s",
+                    jwt, user.getId(), user.isNew());
 
             return ResponseEntity.status(HttpStatus.FOUND)
                     .location(URI.create(redirectUrl))
