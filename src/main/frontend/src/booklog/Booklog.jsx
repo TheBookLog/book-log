@@ -211,6 +211,10 @@ function Booklog() {
         fetchCategories();
     },[]);
 
+    useEffect(() => {
+        fetchBooks();
+    }, []);
+
     useEffect(()=> {
         fetchBooks();
     },[selectedCategory]);
@@ -253,7 +257,8 @@ function Booklog() {
             const response = await fetch(url);
             const data = await response.json();
 
-            let fetchedBooks = data.books || data.item || [];
+            console.log("응답 전체:", data);
+            let fetchedBooks = data.books || data.item || (Array.isArray(data) ? data : []) || [];
 
             if (query) {
                 const lowerQuery = query.toLowerCase();
@@ -377,7 +382,7 @@ function Booklog() {
                                         console.log("Clicked Book : ", book);
                                         navigate(`/bookdetail/${book.isbn}`);
                                     }}>
-                                    <BookImage src={book.cover} alt={book.title} />
+                                    <BookImage src={book.cover || book.coverUrl} alt={book.title} />
                                     <BookTitle>{book.title}</BookTitle>
                                     <BookAuthor>{book.author}</BookAuthor>
                                 </BookCard>

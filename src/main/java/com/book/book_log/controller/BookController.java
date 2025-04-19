@@ -27,7 +27,18 @@ public class BookController {
     // 모든 책 조회
     @GetMapping
     public ResponseEntity<List<BookResponseDTO>> getAllBooks() {
-        List<BookResponseDTO> books = bookSvc.getAllBooks();
+        AladinBookResponseDTO response = aladinApiSvc.searchBooks("베스트셀러"); // 기본 키워드
+        List<BookResponseDTO> books = response.getItem().stream()
+                .map(item -> new BookResponseDTO(
+                        null,
+                        item.getTitle(),
+                        item.getAuthor(),
+                        item.getPublisher(),
+                        item.getCover(),
+                        null
+                ))
+                .toList();
+
         return ResponseEntity.ok(books);
     }
 
