@@ -17,24 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository uRepo;
 
-    // 사용자 생성
-    public UserResponseDTO createUser(UserRequestDTO dto) {
-        if (uRepo.existsByUsername(dto.getUsername())) {
-            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
-        }
-
-        User user = new User();
-        user.setUsername(dto.getUsername());
-        user.setGender(Gender.valueOf(dto.getGender().toUpperCase())); //String -> ENUM
-        user.setAge_group(AgeGroup.valueOf(dto.getAgeGroup().toUpperCase())); //String -> ENUM
-
-        User savedUser = uRepo.save(user);
-        return toResponseDTO(savedUser); // User -> DTO 변환
-    }
-
     // 사용자 조회
     public UserResponseDTO getUserById(String id) {
-        User user =  uRepo.findById(id)
+        User user = uRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
         return toResponseDTO(user);
     }
@@ -42,13 +27,21 @@ public class UserService {
     // 사용자 정보 업데이트
     public UserResponseDTO updateUser(String id, UserRequestDTO dto) {
         User user = uRepo.findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-        user.setUsername(dto.getUsername());
-        user.setGender(Gender.valueOf(dto.getGender().toUpperCase())); // String -> ENUM
-        user.setAge_group(AgeGroup.valueOf(dto.getAgeGroup().toUpperCase())); //String -> ENUM
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
-        User updatedUser = uRepo.save(user);
-        return toResponseDTO(updatedUser); // User -> DTO 변환
+        if (dto.getUsername() != null) {
+            user.setUsername(dto.getUsername());
+        }
+
+        if (dto.getGender() != null) {
+            user.setGender(Gender.valueOf(dto.getGender().toUpperCase()));
+        }
+
+        if (dto.getAgeGroup() != null) {
+            user.setAgeGroup(AgeGroup.valueOf(dto.getAgeGroup().toUpperCase()));
+        }
+
+        return toResponseDTO(user);
     }
 
     // 사용자 삭제
@@ -69,8 +62,9 @@ public class UserService {
         return new UserResponseDTO(
                 user.getId(),
                 user.getUsername(),
-                user.getGender().toString(), // ENUM -> String
-                user.getAge_group().toString() // ENUM -> String
+                user.getGender() != null ? user.getGender().toString() : null,
+                user.getAgeGroup() != null ? user.getAgeGroup().toString() : null,
+                user.getOauthProvider().toString()
         );
     }
 }
