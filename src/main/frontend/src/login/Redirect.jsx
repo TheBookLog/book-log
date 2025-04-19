@@ -13,9 +13,10 @@ function Redirect() {
         const params = new URLSearchParams(window.location.search);
         const token = params.get("token");
         const userId = params.get("userId");
-        const isNewUser = params.get("isNewUser");
+        const isNew = params.get("isNew");
 
         console.log("저장할 토큰 : ",token);
+        console.log("값:", isNew);
 
         if (token && userId) {
             localStorage.setItem("accessToken", token);
@@ -25,7 +26,7 @@ function Redirect() {
             dispatch(login()); //redux 로그인상태 업데이트
 
             setTimeout(()=>{
-                if (isNewUser === "true") {
+                if (isNew === "true") {
                     navigate("/addinformation");
                 } else {
                     navigate("/");
