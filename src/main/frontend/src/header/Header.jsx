@@ -70,7 +70,7 @@ function Header() {
         } else {
             dispatch(logout());
         }
-    }, [dispatch, localStorageToken]);
+    }, [dispatch]);
 
     const navigateToHome = () => {
         navigate("/");
