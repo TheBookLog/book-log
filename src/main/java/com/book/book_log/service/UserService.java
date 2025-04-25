@@ -64,7 +64,8 @@ public class UserService {
                 user.getUsername(),
                 user.getGender() != null ? user.getGender().toString() : null,
                 user.getAgeGroup() != null ? user.getAgeGroup().toString() : null,
-                user.getOauthProvider().toString()
+                user.getOauthProvider().toString(),
+                false
         );
     }
 }
