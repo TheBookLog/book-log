@@ -127,7 +127,7 @@ const ModalButtonContainer = styled.div`
 function Mypage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { id } = useParams();
+    const id = localStorage.getItem("userId");
 
     const [formData, setFormData ] = useState({
         nickname : "",
@@ -142,6 +142,22 @@ function Mypage() {
         fetch(`/api/users/${id}`)
             .then((res) => res.json())
             .then((data) => {
+                console.log("받은 사용자 데이터:",data);
+                const genderMap = {
+                    MALE : "남성",
+                    FEMALE : "여성",
+                    UNKNOWN : "기타"
+                };
+
+                const ageGroupMap = {
+                    AGE_10s : "10대",
+                    AGE_20s : "20대",
+                    AGE_30s : "30대",
+                    AGE_40s : "40대",
+                    AGE_50s : "50대",
+                    AGE_60_PLUS : "60대 이상",
+                };
+
                 setFormData({
                     nickname : data.nickname || "",
                     gender : data.gender || "",
@@ -207,13 +223,34 @@ function Mypage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
+        const genderMap = {
+            "남성" : "MALE",
+            "여성" : "FEMALE",
+            "기타" : "UNKNOWN"
+        };
+        
+        const ageGroupMap = {
+        "10대" : "AGE_10s",
+        "20대" : "AGE_20s",
+        "30대" : "AGE_30s",
+        "40대" : "AGE_40s",
+        "50대" : "AGE_50s",
+        "60대 이상" : "AGE_60_PLUS",
+        };
+        
+        const payload = {
+            username : formData.nickname,
+            gender : genderMap[formData.gender],
+            ageGroup : ageGroupMap[formData.ageGroup]
+        };
+
         try {
             const response = await fetch(`/api/users/${id}`, {
                 method : "PUT",
                 headers : {
                     "Content-Type" : "application/json",
                 },
-                body : JSON.stringify(formData),
+                body : JSON.stringify(payload),
             });
             if(response.ok) {
                 alert("성공적으로 수정되었습니다. !");

@@ -27,7 +27,7 @@ function Redirect() {
 
             setTimeout(()=>{
                 if (isNew === "true") {
-                    navigate("/addinformation");
+                    navigate("/addinformation", { state: { kakaoId: userId}});
                 } else {
                     navigate("/");
                 }
