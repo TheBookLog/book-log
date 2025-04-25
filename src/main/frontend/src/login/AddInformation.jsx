@@ -141,7 +141,7 @@ function AddInformation() {
         const checkNickname = setTimeout(async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:8080/api/users/check-username?username=${formData.nickname}`
+                    `/api/users/check-username?username=${formData.nickname}`
                 );
                 setNicknameError(response.data.exists);
             } catch (error) {
@@ -158,17 +158,29 @@ function AddInformation() {
         });
     };
 
-    const handleGenderClick = (gender) => {
+    const handleGenderClick = (genderKor) => {
+        const genderMap = {
+            "남성": "MALE",
+            "여성": "FEMALE"
+        };
         setFormData((prevData) => ({
             ...prevData,
-            gender,
+            gender: genderMap[genderKor],
         }));
     };
 
-    const handleAgeGroupClick = (ageGroup) => {
+    const handleAgeGroupClick = (ageKor) => {
+        const ageGroupMap = {
+            "10대": "AGE_10s",
+            "20대": "AGE_20s",
+            "30대": "AGE_30s",
+            "40대": "AGE_40s",
+            "50대": "AGE_50s",
+            "60대 이상": "AGE_60_PLUS"
+        };
         setFormData((prevData) => ({
             ...prevData,
-            ageGroup,
+            ageGroup : ageGroupMap[ageKor]
         }));
     };
     
@@ -179,22 +191,25 @@ function AddInformation() {
             openModal();
             return;
         }
-        
-        try { //쿠키에서 토큰 가져오기
-            const accessToken = localStorage.getItem("accessToken");
-            if (!accessToken) {
-                console.error("인증 정보 없음");
-                navigate("/login");
-                return;
-            }
-            let userId = kakaoId || localStorage.getItem("userId");
-            if (!userId) {
-                console.error("사용자 정보 없음");
-                navigate("/login");
-                return;
-            }
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+            console.error("인증 정보 없음");
+            navigate("/login");
+            return;
+        }
+
+        const userIdFromStrage = localStorage.getItem("userId");
+        const userId = kakaoId || userIdFromStrage;
+
+        if (!userId) {
+            console.error("사용자 정보 없음");
+            navigate("/login");
+            return;
+        }
+
+        try {
             const response = await axios.put(
-                `http://localhost:8080/api/users/${userId}`,
+                `/api/users/${userId}`,
                 {
                     nickname : formData.nickname,
                     gender : formData.gender,
@@ -207,12 +222,12 @@ function AddInformation() {
 
             );
             console.log("사용자 정보 업데이트 성공 : ",response.data);
-            navigate("/home");
+            navigate("/");
         }
         catch (error) {
             console.log("사용자 정보 업데이트 실패 : ", error);
         }
-    };
+    };           
 
     
     const [backColor, setBackColor] = useState("rgba(0, 0, 0, 0.2)");
