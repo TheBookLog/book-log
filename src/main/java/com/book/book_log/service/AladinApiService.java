@@ -16,6 +16,7 @@ public class AladinApiService {
 
     public AladinBookResponseDTO searchBooks(String query) {
         String url = String.format(
+                // 임시로 결과가 48개만 나오도록 설정(TODO: 페이지네이션 추가)
                 "%sItemSearch.aspx?ttbkey=%s&Query=%s&SearchTarget=Book&output=js&MaxResults=48",
                 aladinApiProperties.getBaseUrl(), aladinApiProperties.getKey(), query
         );
