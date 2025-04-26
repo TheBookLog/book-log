@@ -16,7 +16,7 @@ public class AladinApiService {
 
     public AladinBookResponseDTO searchBooks(String query) {
         String url = String.format(
-                "%sItemSearch.aspx?ttbkey=%s&Query=%s&SearchTarget=Book&output=js",
+                "%sItemSearch.aspx?ttbkey=%s&Query=%s&SearchTarget=Book&output=js&MaxResults=48",
                 aladinApiProperties.getBaseUrl(), aladinApiProperties.getKey(), query
         );
 
