@@ -160,8 +160,8 @@ function Mypage() {
 
                 setFormData({
                     nickname : data.nickname || "",
-                    gender : data.gender || "",
-                    ageGroup : data.ageGroup || "",
+                    gender : genderMap[data.gender] || "",
+                    ageGroup : ageGroupMap[data.ageGroup] || "",
                 });
             })
             .catch((err) => console.error("Error : ",err));
@@ -228,19 +228,20 @@ function Mypage() {
             "여성" : "FEMALE",
             "기타" : "UNKNOWN"
         };
-        
+
         const ageGroupMap = {
-        "10대" : "AGE_10s",
-        "20대" : "AGE_20s",
-        "30대" : "AGE_30s",
-        "40대" : "AGE_40s",
-        "50대" : "AGE_50s",
-        "60대 이상" : "AGE_60_PLUS",
+            "10대" : "AGE_10s",
+            "20대" : "AGE_20s",
+            "30대" : "AGE_30s",
+            "40대" : "AGE_40s",
+            "50대" : "AGE_50s",
+            "60대 이상" : "AGE_60_PLUS",
         };
+
         
         const payload = {
             username : formData.nickname,
-            gender : genderMap[formData.gender],
+            gender : genderMap[formData.ageGroup],
             ageGroup : ageGroupMap[formData.ageGroup]
         };
 
