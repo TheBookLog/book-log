@@ -191,18 +191,18 @@ function AddInformation() {
             openModal();
             return;
         }
-        const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) {
-            console.error("인증 정보 없음");
-            navigate("/login");
+
+        if (!formData.nickname || !formData.gender || !formData.ageGroup) {
+            alert("모든 정보를 입력해주세요");
             return;
         }
 
+        const accessToken = localStorage.getItem("accessToken");
         const userIdFromStrage = localStorage.getItem("userId");
         const userId = kakaoId || userIdFromStrage;
 
-        if (!userId) {
-            console.error("사용자 정보 없음");
+        if (!accessToken || !userId) {
+            console.error("인증 정보 없음");
             navigate("/login");
             return;
         }
@@ -227,7 +227,21 @@ function AddInformation() {
         catch (error) {
             console.log("사용자 정보 업데이트 실패 : ", error);
         }
-    };           
+    };     
+    
+    const genderLabelMap = {
+        MALE : "남성",
+        FEMALE : "여성",
+    };
+
+    const ageLabelMap = {
+        AGE_10s : "10대",
+        AGE_20s : "20대",
+        AGE_30s : "30대",
+        AGE_40s : "40대",
+        AGE_50s : "50대",
+        AGE_60_PLUS : "60대 이상",
+    };
 
     
     const [backColor, setBackColor] = useState("rgba(0, 0, 0, 0.2)");
@@ -259,33 +273,29 @@ function AddInformation() {
                     <div>
                         <Label>성별</Label>
                         <ButtonGroup>
-                            <Button
-                                type="button"
-                                active={formData.gender === "남성"}
-                                onClick={() => handleGenderClick("남성")}
-                            >
-                                남성
-                            </Button>
-                            <Button
-                                type="button"
-                                active={formData.gender === "여성"}
-                                onClick={() => handleGenderClick("여성")}
-                            >
-                                여성
-                            </Button>
+                            {["남성", "여성"].map((label) => (
+                                <Button
+                                    key={label}
+                                    type="button"
+                                    active={formData.gender === (label === "남성" ? "MALE" : "FEMALE")}
+                                    onClick={() => handleGenderClick(label)}
+                                >
+                                    {label}
+                                </Button>
+                            ))}
                         </ButtonGroup>
                     </div>
                     <div>
                         <Label>연령대</Label>
                         <ButtonGroup>
-                            {["10대", "20대", "30대", "40대", "50대", "60대 이상"].map((age) => (
+                            {Object.values(ageLabelMap).map((label) => (
                                 <Button
-                                    key={age}
+                                    key={label}
                                     type="button"
-                                    active={formData.ageGroup === age}
-                                    onClick={() => handleAgeGroupClick(age)}
+                                    active={formData.ageGroup === Object.keys(ageLabelMap).find(key => ageLabelMap[key] === label)}
+                                    onClick={() => handleAgeGroupClick(label)}
                                 >
-                                    {age}
+                                    {label}
                                 </Button>
                             ))}
                         </ButtonGroup>
