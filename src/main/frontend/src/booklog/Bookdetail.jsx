@@ -10,7 +10,7 @@ const Container = styled.div`
     width : 100%;
     max-width : 1470px;
     padding-top : 70px;
-    align-itmes : center;
+    align-items : center;
     justify-content : center;
     padding-left : 30px;
     padding-right : 30px;
@@ -27,7 +27,7 @@ const Detail = styled.div`
     background-color : #EBF1F5;
     border-radius : 10px;
     width : 100%;
-    align-itmes : center;
+    align-items : center;
     justify-content : center;
     
     padding : 20px;
@@ -57,7 +57,8 @@ const Bookcontainer = styled.div`
 const InfoRow = styled.div`
     display : flex;
     justify-content : space-between;
-    width : 200px;
+    width : 100%;
+    max-width : 500px;
 `;
 
 const Label = styled.span`
@@ -137,6 +138,7 @@ const LogAuthor = styled.div`
 function Bookdetail() {
     const navigate = useNavigate();
     const { isbn } = useParams();
+    const { id } = useParams();
 
     const navigateToWritelog = () => {
         navigate(`/writelog/${isbn}`);
@@ -147,6 +149,8 @@ function Bookdetail() {
     const [logs, setLogs] = useState([]);
 
     useEffect(() => {
+        console.log("id값 : ",id);
+        console.log("isbn값 : ",isbn);
         const fetchBookData = async () => {
             try {
                 const { data } = await axios.get(`/api/books/${isbn}`);

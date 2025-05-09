@@ -372,7 +372,7 @@ function Booklog() {
                         <BookList>
                             {currentBooks.map((book) => (
                                 <BookCard
-                                    key={book.isbn}
+                                    key={book.id}
                                     onClick={()=> {
                                         console.log("Clicked Book : ", book);
                                         navigate(`/bookdetail/${book.isbn}`);
