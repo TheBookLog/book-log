@@ -52,9 +52,11 @@ public class CustomOAuth2UserService {
 
         // 기존 사용자 조회
         User user = uRepo.findByOauthIdAndOauthProvider(oauthId, oauthProvider).orElse(null);
+        boolean isNew = false; // ✅ 추가됨
 
         // 최초 로그인이라면 사용자 등록
         if (user == null) {
+            isNew = true; // ✅ 추가됨
             user = new User();
             user.setOauthId(oauthId);
             user.setUsername(username);
@@ -66,6 +68,10 @@ public class CustomOAuth2UserService {
             user.setExpiresAt(accessToken.getExpiresAt().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
             user = uRepo.save(user);
+        } else {
+            if (user.getGender() == Gender.UNKNOWN || user.getAgeGroup() == AgeGroup.UNKNOWN) {
+                isNew = true;
+            }
         }
 
         return new UserResponseDTO(
@@ -73,7 +79,8 @@ public class CustomOAuth2UserService {
                 user.getUsername(),
                 user.getGender() != null ? user.getGender().toString() : null,
                 user.getAgeGroup() != null ? user.getAgeGroup().toString() : null,
-                user.getOauthProvider().toString()
+                user.getOauthProvider().toString(),
+                isNew // ✅ 추가됨
         );
     }
 }

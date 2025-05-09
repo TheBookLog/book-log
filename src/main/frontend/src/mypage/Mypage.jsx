@@ -5,6 +5,8 @@ import image from "./image.png";
 import Modal from "../component/Modal";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, SubmitButton } from "../component/Button";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/authSlice";
 
 const Container = styled.div`
     display : flex;
@@ -21,7 +23,7 @@ const Text = styled.h5`
     margin : 2px 0;
     margin-top : ${( props ) => props.mt || "0px"};
     margin-bottom : ${( props ) => props.mb || "0px"};
-    cursor : ${( props ) => props.cs || "none"};
+    cursor : ${( props ) => props.cs || "pointer"};
 `;
 
 const Main = styled.div`
@@ -124,7 +126,8 @@ const ModalButtonContainer = styled.div`
 
 function Mypage() {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const dispatch = useDispatch();
+    const id = localStorage.getItem("userId");
 
     const [formData, setFormData ] = useState({
         nickname : "",
@@ -139,11 +142,30 @@ function Mypage() {
         fetch(`/api/users/${id}`)
             .then((res) => res.json())
             .then((data) => {
+                console.log("받은 사용자 데이터:",data);
+                const genderMap = {
+                    MALE : "남성",
+                    FEMALE : "여성",
+                    UNKNOWN : "기타"
+                };
+
+                const ageGroupMap = {
+                    AGE_10S : "10대",
+                    AGE_20S : "20대",
+                    AGE_30S : "30대",
+                    AGE_40S : "40대",
+                    AGE_50S : "50대",
+                    AGE_60_PLUS : "60대 이상",
+                };
+
+                // const ageGroupKey = data.ageGroup || "";
+
                 setFormData({
                     nickname : data.nickname || "",
-                    gender : data.gender || "",
-                    ageGroup : data.ageGroup || "",
+                    gender : genderMap[data.gender] || "",
+                    ageGroup : ageGroupMap[data.ageGroup] || "",
                 });
+                console.log(data.ageGroup);
             })
             .catch((err) => console.error("Error : ",err));
     },[id]);
@@ -176,21 +198,13 @@ function Mypage() {
     };
 
     const handleLogout = async () => {
-        try {
-            const response = await fetch("api/auth/logout", {
-                method : "POST",
-                credentials : "include",
-            });
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("userId");
 
-            if (response.ok) {
-                alert("로그아웃되었습니다.");
-                navigate("/home");
-            } else {
-                alert("로그아웃 실패");
-            }
-        } catch (error) {
-            console.error("Logout : ", error);
-        }
+        dispatch(logout());
+
+        alert("로그아웃되었습니다.");
+        navigate("/");
     }
 
     const handleDeleteAccount = async (e) => {
@@ -212,13 +226,35 @@ function Mypage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
+        const genderMap = {
+            "남성" : "MALE",
+            "여성" : "FEMALE",
+            "기타" : "UNKNOWN"
+        };
+
+        const ageGroupMap = {
+            "10대" : "AGE_10S",
+            "20대" : "AGE_20S",
+            "30대" : "AGE_30S",
+            "40대" : "AGE_40S",
+            "50대" : "AGE_50S",
+            "60대 이상" : "AGE_60_PLUS",
+        };
+
+        
+        const payload = {
+            username : formData.nickname,
+            gender : genderMap[formData.gender],
+            ageGroup : ageGroupMap[formData.ageGroup]
+        };
+
         try {
             const response = await fetch(`/api/users/${id}`, {
                 method : "PUT",
                 headers : {
                     "Content-Type" : "application/json",
                 },
-                body : JSON.stringify(formData),
+                body : JSON.stringify(payload),
             });
             if(response.ok) {
                 alert("성공적으로 수정되었습니다. !");
@@ -243,14 +279,14 @@ function Mypage() {
         <Container>
             <Header />
             <Main>
-                <Text size="25px">
+                <Text size="25px" cs="pointer">
                     My Page
                 </Text>
                 <Main2>
-                    <Text mt="13px">프로필 관리</Text>
+                    <Text mt="13px" cs="pointer">프로필 관리</Text>
                     <Center width="18px" height="18px" mt="14px" ml="3px" src={image} alt="관리" />
                 </Main2>
-                <Text mt="3px" onClick={handleLogout}>로그아웃</Text>
+                <Text mt="3px" cs="pointer" onClick={handleLogout}>로그아웃</Text>
             </Main>
                 <Div>
                     <Center mt="10px" src={image1} alt="회원" />
