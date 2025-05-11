@@ -377,10 +377,10 @@ function Booklog() {
                         <BookList>
                             {currentBooks.map((book) => (
                                 <BookCard
-                                    key={book.id}
+                                    key={book.id || book.isbn}
                                     onClick={()=> {
                                         console.log("Clicked Book : ", book);
-                                        navigate(`/bookdetail/${book.isbn}`);
+                                        navigate(`/bookdetail/${book.id || book.isbn}`);
                                     }}>
                                     <BookImage src={book.cover || book.coverUrl} alt={book.title} />
                                     <BookTitle>{book.title}</BookTitle>

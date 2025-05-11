@@ -141,7 +141,7 @@ function Bookdetail() {
     const { id } = useParams();
 
     const navigateToWritelog = () => {
-        navigate(`/writelog/${isbn}`);
+        navigate(`/writelog/${id}`);
     }
 
     const [bookData, setBookData] = useState(null);
@@ -153,7 +153,7 @@ function Bookdetail() {
         console.log("isbn값 : ",isbn);
         const fetchBookData = async () => {
             try {
-                const { data } = await axios.get(`/api/books/${isbn}`);
+                const { data } = await axios.get(`/api/books/${id}`);
                 console.log("책데이터 : ", data);
                 setBookData(data); //setBookData(data)가 실행되면서 bookData 상태 값이 위의 객체로 설정됨.
             } catch (error) {
@@ -164,18 +164,18 @@ function Bookdetail() {
 
         const fetchBookLogs = async () => {
             try {
-                const { data } = await axios.get(`/api/logs/book/${isbn}`);
+                const { data } = await axios.get(`/api/logs/book/${id}`);
                 console.log(data);
                 setLogs(data);
             } catch (error) {
                 console.error("Log 가져오기 실패:",error);
             }
         }
-        if (isbn) {
+        if (id) {
             fetchBookData();
             fetchBookLogs();
         }
-    },[isbn]);
+    },[id]);
 
     const totalLogs = logs.length;
     const averageRating = bookData?.averageRating
