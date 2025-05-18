@@ -165,12 +165,11 @@ function Mypage() {
                     gender : genderMap[data.gender] || "",
                     ageGroup : ageGroupMap[data.ageGroup] || "",
                 });
-                console.log(data.ageGroup);
             })
             .catch((err) => console.error("Error : ",err));
     },[id]);
 
-    const handleNinknameChange = async (e) => {
+    const handleNicknameChange = async (e) => {
         const newNickname = e.target.value;
         setFormData({...formData, nickname : newNickname});
 
@@ -294,12 +293,12 @@ function Mypage() {
                 </Div>
                 <FormContainer onSubmit={handleSubmit}>
                     <Text size="20px" mt="50px" mb="10px">프로필 설정</Text>
-                    <Label htmlFor="ninkname">닉네임</Label>
+                    <Label htmlFor="nickname">닉네임</Label>
                     <Input
                         type="text"
-                        id="ninkname"
+                        id="nickname"
                         value={formData.nickname}
-                        onChange={handleNinknameChange}
+                        onChange={handleNicknameChange}
                         required
                     />
                     {nicknameError && <Text size="12px" style={{ color : "red"}}>{nicknameError}</Text>}
