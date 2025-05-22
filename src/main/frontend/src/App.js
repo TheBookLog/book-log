@@ -24,8 +24,8 @@ function App() {
         <Route path="/addinformation" element={<AddInformation />}></Route>
         <Route path="/booklog" element={<Booklog />}></Route>
         <Route path="/mypage" element={<Mypage />}></Route>
-        <Route path="/writelog" element={<Writelog />}></Route>
-        <Route path="/bookdetail/:isbn" element={<Bookdetail />}></Route>
+        <Route path="/writelog/:id" element={<Writelog />}></Route>
+        <Route path="/bookdetail/:id" element={<Bookdetail />}></Route>
       </Routes>
     </BrowserRouter>
   );

@@ -10,7 +10,7 @@ const Container = styled.div`
     width : 100%;
     max-width : 1470px;
     padding-top : 70px;
-    align-itmes : center;
+    align-items : center;
     justify-content : center;
     padding-left : 30px;
     padding-right : 30px;
@@ -27,7 +27,7 @@ const Detail = styled.div`
     background-color : #EBF1F5;
     border-radius : 10px;
     width : 100%;
-    align-itmes : center;
+    align-items : center;
     justify-content : center;
     
     padding : 20px;
@@ -57,7 +57,8 @@ const Bookcontainer = styled.div`
 const InfoRow = styled.div`
     display : flex;
     justify-content : space-between;
-    width : 200px;
+    width : 100%;
+    max-width : 500px;
 `;
 
 const Label = styled.span`
@@ -136,10 +137,11 @@ const LogAuthor = styled.div`
 
 function Bookdetail() {
     const navigate = useNavigate();
-    const { isbn } = useParams();
+    // const { isbn } = useParams();
+    const { id } = useParams();  
 
     const navigateToWritelog = () => {
-        navigate(`/writelog/${isbn}`);
+        navigate(`/writelog/${id}`);
     }
 
     const [bookData, setBookData] = useState(null);
@@ -147,9 +149,11 @@ function Bookdetail() {
     const [logs, setLogs] = useState([]);
 
     useEffect(() => {
+        // console.log("id값 : ",id);
+        // console.log("isbn값 : ",isbn);
         const fetchBookData = async () => {
             try {
-                const { data } = await axios.get(`/api/books/${isbn}`);
+                const { data } = await axios.get(`/api/books/${id}`);
                 console.log("책데이터 : ", data);
                 setBookData(data); //setBookData(data)가 실행되면서 bookData 상태 값이 위의 객체로 설정됨.
             } catch (error) {
@@ -160,18 +164,18 @@ function Bookdetail() {
 
         const fetchBookLogs = async () => {
             try {
-                const { data } = await axios.get(`/api/logs/book/${isbn}`);
+                const { data } = await axios.get(`/api/logs/book/${id}`);
                 console.log(data);
                 setLogs(data);
             } catch (error) {
                 console.error("Log 가져오기 실패:",error);
             }
         }
-        if (isbn) {
+        if (id) {
             fetchBookData();
             fetchBookLogs();
         }
-    },[isbn]);
+    },[id]);
 
     const totalLogs = logs.length;
     const averageRating = bookData?.averageRating
@@ -183,7 +187,7 @@ function Bookdetail() {
             <DetailWrapper>
                 <Detail>
                     <Cardcontainer>
-                        <Image src={bookData?.cover} alt={bookData?.title}/>
+                        <Image src={bookData?.cover} alt={bookData?.title}/> 
                         <Bookcontainer>
                             <InfoRow>
                                 <Label>저자 정보</Label>
