@@ -137,8 +137,8 @@ const LogAuthor = styled.div`
 
 function Bookdetail() {
     const navigate = useNavigate();
-    const { isbn } = useParams();
-    const { id } = useParams();
+    // const { isbn } = useParams();
+    const { id } = useParams();  
 
     const navigateToWritelog = () => {
         navigate(`/writelog/${id}`);
@@ -149,8 +149,8 @@ function Bookdetail() {
     const [logs, setLogs] = useState([]);
 
     useEffect(() => {
-        console.log("id값 : ",id);
-        console.log("isbn값 : ",isbn);
+        // console.log("id값 : ",id);
+        // console.log("isbn값 : ",isbn);
         const fetchBookData = async () => {
             try {
                 const { data } = await axios.get(`/api/books/${id}`);
@@ -187,7 +187,7 @@ function Bookdetail() {
             <DetailWrapper>
                 <Detail>
                     <Cardcontainer>
-                        <Image src={bookData?.cover} alt={bookData?.title}/>
+                        <Image src={bookData?.cover} alt={bookData?.title}/> 
                         <Bookcontainer>
                             <InfoRow>
                                 <Label>저자 정보</Label>
