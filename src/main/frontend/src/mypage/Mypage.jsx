@@ -130,13 +130,13 @@ function Mypage() {
     const id = localStorage.getItem("userId");
 
     const [formData, setFormData ] = useState({
-        nickname : "",
+        username : "",
         gender : "",
         ageGroup : "",
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [nicknameError, setNicknameError] = useState("");
+    const [usernameError, setUsernameError] = useState("");
     
     useEffect(() => { //기본값이 GET
         fetch(`/api/users/${id}`)
@@ -161,7 +161,7 @@ function Mypage() {
                 // const ageGroupKey = data.ageGroup || "";
 
                 setFormData({
-                    nickname : data.nickname || "",
+                    username : data.username || "",
                     gender : genderMap[data.gender] || "",
                     ageGroup : ageGroupMap[data.ageGroup] || "",
                 });
@@ -169,19 +169,19 @@ function Mypage() {
             .catch((err) => console.error("Error : ",err));
     },[id]);
 
-    const handleNicknameChange = async (e) => {
-        const newNickname = e.target.value;
-        setFormData({...formData, nickname : newNickname});
+    const handleUsernameChange = async (e) => {
+        const newUsername = e.target.value;
+        setFormData({...formData, username : newUsername});
 
-        if (newNickname.trim()==="") return;
+        if (newUsername.trim()==="") return;
 
         try {
-            const response = await fetch(`/api/users/check-username?username=${newNickname}`);
+            const response = await fetch(`/api/users/check-username?username=${newUsername}`);
             const data = await response.json();
             if (!data.available) {
-                setNicknameError("이미 사용 중인 닉네임입니다.");
+                setUsernameError("이미 사용 중인 닉네임입니다.");
             } else {
-                setNicknameError("");
+                setUsernameError("");
             }
         } catch (error) {
             console.error("Error : ",error);
@@ -242,7 +242,7 @@ function Mypage() {
 
         
         const payload = {
-            username : formData.nickname,
+            username : formData.username,
             gender : genderMap[formData.gender],
             ageGroup : ageGroupMap[formData.ageGroup]
         };
@@ -289,19 +289,19 @@ function Mypage() {
             </Main>
                 <Div>
                     <Center mt="10px" src={image1} alt="회원" />
-                    <Text size="25px" mt="7px">유저 닉네임</Text>
+                    <Text size="25px" mt="7px">{formData.username || "닉네임 없음"}</Text>
                 </Div>
                 <FormContainer onSubmit={handleSubmit}>
                     <Text size="20px" mt="50px" mb="10px">프로필 설정</Text>
-                    <Label htmlFor="nickname">닉네임</Label>
+                    <Label htmlFor="username">닉네임</Label>
                     <Input
                         type="text"
-                        id="nickname"
-                        value={formData.nickname}
-                        onChange={handleNicknameChange}
+                        id="username"
+                        value={formData.username}
+                        onChange={handleUsernameChange}
                         required
                     />
-                    {nicknameError && <Text size="12px" style={{ color : "red"}}>{nicknameError}</Text>}
+                    {usernameError && <Text size="12px" style={{ color : "red"}}>{usernameError}</Text>}
                     <Label>성별</Label>
                     <ButtonGroup>
                         <Button 
