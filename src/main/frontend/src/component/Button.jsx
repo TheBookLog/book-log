@@ -28,17 +28,17 @@ const StyledSubmitButton = styled.button`
     }
 `;
 
-export const Button = ({ active, children, onClick }) => {
+export const Button = ({ active, children, onClick, type="button" }) => {
     return (
-        <StyledButton active={active} onClick={onClick}>
+        <StyledButton active={active} onClick={onClick} type={type}>
             {children}
         </StyledButton>
     );
 };
 
-export const SubmitButton = ({ bgColor, children, onClick }) => {
+export const SubmitButton = ({ bgColor, children, onClick, type="submit" }) => {
     return (
-        <StyledSubmitButton bgColor={bgColor} onClick={onClick}>
+        <StyledSubmitButton bgColor={bgColor} onClick={onClick} type={type}> 
             {children}
         </StyledSubmitButton>
     );

@@ -137,12 +137,14 @@ function Mypage() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [usernameError, setUsernameError] = useState("");
+
+    const [originalData, setOriginalData] = useState({});
     
     useEffect(() => { //기본값이 GET
         fetch(`/api/users/${id}`)
             .then((res) => res.json())
             .then((data) => {
-                console.log("받은 사용자 데이터:",data);
+                // console.log("받은 사용자 데이터:",data);
                 const genderMap = {
                     MALE : "남성",
                     FEMALE : "여성",
@@ -160,11 +162,13 @@ function Mypage() {
 
                 // const ageGroupKey = data.ageGroup || "";
 
-                setFormData({
+                const formattedData =({
                     username : data.username || "",
                     gender : genderMap[data.gender] || "",
                     ageGroup : ageGroupMap[data.ageGroup] || "",
                 });
+                setFormData(formattedData);
+                setOriginalData(formattedData);
             })
             .catch((err) => console.error("Error : ",err));
     },[id]);
@@ -172,20 +176,24 @@ function Mypage() {
     const handleUsernameChange = async (e) => {
         const newUsername = e.target.value;
         setFormData({...formData, username : newUsername});
+        setUsernameError("");
 
-        if (newUsername.trim()==="") return;
+        // if (newUsername.trim()==="") {
+            
+        //     return;
+        // } 
 
-        try {
-            const response = await fetch(`/api/users/check-username?username=${newUsername}`);
-            const data = await response.json();
-            if (!data.available) {
-                setUsernameError("이미 사용 중인 닉네임입니다.");
-            } else {
-                setUsernameError("");
-            }
-        } catch (error) {
-            console.error("Error : ",error);
-        }
+        // try {
+        //     const response = await fetch(`/api/users/check-username?username=${newUsername}`);
+        //     const data = await response.json();
+        //     if (!data.available) {
+        //         setUsernameError("이미 사용 중인 닉네임입니다.");
+        //     } else {
+        //         setUsernameError("");
+        //     }
+        // } catch (error) {
+        //     console.error("Error : ",error);
+        // }
     };
 
     const handleGenderClick = (gender) => {
@@ -241,13 +249,23 @@ function Mypage() {
         };
 
         
-        const payload = {
+
+        try {
+            const checkResponse = await fetch(`/api/users/check-username?username=${formData.username}`);
+            const checkData = await checkResponse.json();
+
+            if (!checkData.available && formData.username !== originalData.username) {
+                setUsernameError("이미 사용중인 닉네임입니다.");
+                return;
+            }
+            setUsernameError("");
+
+            const payload = {
             username : formData.username,
             gender : genderMap[formData.gender],
             ageGroup : ageGroupMap[formData.ageGroup]
-        };
+            };
 
-        try {
             const response = await fetch(`/api/users/${id}`, {
                 method : "PUT",
                 headers : {
@@ -255,8 +273,10 @@ function Mypage() {
                 },
                 body : JSON.stringify(payload),
             });
+
             if(response.ok) {
                 alert("성공적으로 수정되었습니다. !");
+                navigate("/");
             } else {
                 alert("수정에 실패하였습니다.");
             }
