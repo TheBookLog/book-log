@@ -17,7 +17,6 @@ public class SecurityConfig {
                                 "/swagger-ui/**",       // Swagger UI 경로
                                 "/v3/api-docs/**",      // OpenAPI docs
                                 "/v3/api-docs.yaml",     // OpenAPI YAML
-                                "/api/auth/kakao-login/**", // 카카오 로그인 엔드포인트
                                 "/login/oauth2/**", // Spring Security OAuth2 로그인 리다이렉트
                                 "/api/auth/issue-token", // JWT 발급 엔드포인트 허용
                                 "/api/books/**", // 도서 검색 API 인증 없이 허용
