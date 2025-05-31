@@ -86,7 +86,7 @@ function Header() {
 
     // 카카오 로그인 리디렉트 함수
     const redirectToKakaoLogin = () => {
-        window.location.href = "http://localhost:8080/login/oauth2/code/kakao";
+        window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
     };    
 
     const handleImageClick = () => {
