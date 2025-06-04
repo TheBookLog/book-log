@@ -303,7 +303,7 @@ function AddInformation() {
 
                     {/* <SubmitButton type="submit">제출</SubmitButton> */}
                     <ButtonContainer>
-                        <SubmitButton bgColor="#D9D9D9" type="button" onClick={()=>navigate("/home")}>나중에 하기</SubmitButton>
+                        <SubmitButton bgColor="#D9D9D9" type="button" onClick={()=>navigate("/")}>나중에 하기</SubmitButton>
                         <SubmitButton bgColor="#CCEBFF" type="submit">저장</SubmitButton>
                         <Modal isOpen={isModalOpen} closeModal={closeModal}>
                             <ModalContent>
