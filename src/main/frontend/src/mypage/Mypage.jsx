@@ -221,7 +221,7 @@ function Mypage() {
             });
             if (response.ok) {
                 alert("회원 탈퇴가 완료되었습니다.");
-                navigate("/home");
+                navigate("/");
             } else {
                 alert("회원 탈퇴 실패");
             }
@@ -360,7 +360,7 @@ function Mypage() {
                                     <Text size="16px" mt="20px">탈퇴 버튼 선택 시, 계정은 <br /> 삭제되며 복구되지 않습니다.</Text>
                                     <ModalButtonContainer>
                                         <SubmitButton bgColor="#D9D9D9" onClick={closeModal}>취소</SubmitButton>
-                                        <SubmitButton bgColor="#CCEBFF" onClick={handleDeleteAccount}>확인</SubmitButton>
+                                        <SubmitButton type="button" bgColor="#CCEBFF" onClick={handleDeleteAccount}>확인</SubmitButton>
                                     </ModalButtonContainer>
                                 </ModalContent>
                             </Modal>
