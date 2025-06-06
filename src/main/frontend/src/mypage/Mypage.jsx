@@ -144,7 +144,7 @@ function Mypage() {
         fetch(`/api/users/${id}`)
             .then((res) => res.json())
             .then((data) => {
-                // console.log("받은 사용자 데이터:",data);
+                console.log("받은 사용자 데이터:",data);
                 const genderMap = {
                     MALE : "남성",
                     FEMALE : "여성",
@@ -220,6 +220,10 @@ function Mypage() {
                 method : "DELETE",
             });
             if (response.ok) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("userId");
+                dispatch(logout());
+                
                 alert("회원 탈퇴가 완료되었습니다.");
                 navigate("/");
             } else {
