@@ -281,7 +281,7 @@ function Booklog() {
     const handleCategoryClick = (categoryId) => {
         setSelectedCategory(categoryId);
         setQuery(""); //카테고리 변경 시 검색어 초기화
-        fetchBooks();
+        // fetchBooks();
     };
 
     const handleSuggestionClick = async(selectedQuery) => {
@@ -292,8 +292,6 @@ function Booklog() {
             const response = await fetch(`/api/books/search?query=${selectedQuery}`);
             const data = await response.json();
             const books = data.books || data.item || [];
-
-            
 
             const exactMatch = books.find(book => book.title === selectedQuery);
             if (exactMatch) {
@@ -377,10 +375,13 @@ function Booklog() {
                         <BookList>
                             {currentBooks.map((book) => (
                                 <BookCard
-                                    key={book.id || book.isbn}
+                                    key={book.id}
                                     onClick={()=> {
                                         console.log("Clicked Book : ", book);
-                                        navigate(`/bookdetail/${book.id || book.isbn}`);
+                                        console.log("book.id:", book.id);                 // id 확인
+                                        console.log("book.isbn:", book.isbn);             // isbn 확인
+                                        console.log("book.isbn13:", book.isbn13);
+                                        navigate(`/bookdetail/${book.id || book.isbn || book.isbn13}`);
                                     }}>
                                     <BookImage src={book.cover || book.coverUrl} alt={book.title} />
                                     <BookTitle>{book.title}</BookTitle>

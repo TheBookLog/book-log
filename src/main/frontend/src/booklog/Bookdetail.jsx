@@ -29,7 +29,6 @@ const Detail = styled.div`
     width : 100%;
     align-items : center;
     justify-content : center;
-    
     padding : 20px;
 `;
 
@@ -84,6 +83,10 @@ const Logcontainer = styled.div`
     display : flex;
     flex-direction : row;
     justify-content : space-between;
+    align-items : center;
+    width : 100%;
+    max-width : 1500px;
+    padding : 0 20px;
     margin-top : 10px;
 `;
 
@@ -138,7 +141,7 @@ const LogAuthor = styled.div`
 function Bookdetail() {
     const navigate = useNavigate();
     // const { isbn } = useParams();
-    const { id } = useParams();  
+    const { id, isbn } = useParams();  
 
     const navigateToWritelog = () => {
         navigate(`/writelog/${id}`);
@@ -149,8 +152,8 @@ function Bookdetail() {
     const [logs, setLogs] = useState([]);
 
     useEffect(() => {
-        // console.log("id값 : ",id);
-        // console.log("isbn값 : ",isbn);
+        console.log("id값 : ",id);
+        console.log("isbn값 : ",isbn);
         const fetchBookData = async () => {
             try {
                 const { data } = await axios.get(`/api/books/${id}`);
