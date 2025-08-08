@@ -228,13 +228,16 @@ function Booklog() {
             try {
                 const response = await fetch(`/api/books/search?query=${query}`);
                 const data = await response.json();
-                const books = data.books || data.item || [];
+                // const books = data.books || data.item || [];
+                const list = Array.isArray(data) ? data : (data.books || data.items || data.item || []);
 
-                if (books.length > 0) {
-                    const filtererdSuggestions = books  
+                if (list.length > 0) {
+                    const filtered = list  
                         .filter(book => book.title && book.title.toLowerCase().includes(query.toLowerCase()))
                         .map(book => book.title);
-                    setSuggestions([...new Set(filtererdSuggestions)]);
+                    setSuggestions([...new Set(filtered)]);
+                } else {
+                    setSelectedCategory([]);
                 }
                 // if (data.books) {
                 //     setSuggestions(data.books.map(book=>book.title));
@@ -250,15 +253,17 @@ function Booklog() {
     const fetchBooks = async () => {
         try {
             let url = query 
-                ? `/api/books/search?query=${query}`
-                : selectedCategory
+                ? `/api/books/search?query=${encodeURIComponent(query)}`
+                : (selectedCategory != null
                     ? `/api/books/category/${selectedCategory}`
-                    : "/api/books";
+                    : "/api/books");
             const response = await fetch(url);
             const data = await response.json();
 
             console.log("응답 전체:", data);
-            let fetchedBooks = data.books || data.item || (Array.isArray(data) ? data : []) || [];
+            let fetchedBooks = Array.isArray(data)
+                ? data
+                : (data.books || data.items || data.item || []);
 
             if (query) {
                 const lowerQuery = query.toLowerCase();
@@ -289,11 +294,11 @@ function Booklog() {
         setSuggestions([]);
 
         try {
-            const response = await fetch(`/api/books/search?query=${selectedQuery}`);
+            const response = await fetch(`/api/books/search?query=${encodeURIComponent(selectedQuery)}`);
             const data = await response.json();
-            const books = data.books || data.item || [];
+            const list = Array.isArray(data) ? data : (data.books || data.items || data.item || []);
 
-            const exactMatch = books.find(book => book.title === selectedQuery);
+            const exactMatch = list.find(book => book.title === selectedQuery);
             if (exactMatch) {
                 setBooks([exactMatch]);
             } else {
