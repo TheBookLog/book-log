@@ -65,4 +65,6 @@ public class AuthController {
         SecurityContextHolder.clearContext(); // 인증 정보 초기화
         return ResponseEntity.ok("성공적으로 로그아웃 되었습니다."); // 로그아웃 성공 메시지 반환
     }
+
+    // jira-github 테스트
 }
