@@ -2,7 +2,7 @@ package com.book.book_log.service;
 
 import com.book.book_log.dto.LogRequestDTO;
 import com.book.book_log.dto.LogResponseDTO;
-import com.book.book_log.entity.Book;
+//import com.book.book_log.entity.Book;
 import com.book.book_log.entity.Log;
 import com.book.book_log.entity.User;
 import com.book.book_log.repository.LogRepository;
@@ -95,7 +95,7 @@ public class LogService {
         Log log = logRepo.findById(logId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 Log를 찾을 수 없습니다: " + logId));
 
-        Book book = log.getBook();
+//        Book book = log.getBook();
         logRepo.delete(log);
 
 //        statisticsSvc.updateStatistics(book);
