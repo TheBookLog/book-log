@@ -21,7 +21,7 @@ public class LogService {
     private final LogRepository logRepo;
     private final BookRepository bookRepo;
     private final UserRepository userRepo;
-    private final StatisticsService statisticsSvc;
+//    private final StatisticsService statisticsSvc;
 
     // Log 생성(Book 자동 저장 및 통계 업데이트 포함)
     @Transactional
@@ -57,7 +57,7 @@ public class LogService {
 
         logRepo.save(log);
 
-        statisticsSvc.updateStatistics(book);
+//        statisticsSvc.updateStatistics(book);
 
         return new LogResponseDTO(log);
     }
@@ -85,7 +85,7 @@ public class LogService {
 
         logRepo.save(log);
 
-        statisticsSvc.updateStatistics(log.getBook());
+//        statisticsSvc.updateStatistics(log.getBook());
 
         return new LogResponseDTO(log);
     }
@@ -99,7 +99,7 @@ public class LogService {
         Book book = log.getBook();
         logRepo.delete(log);
 
-        statisticsSvc.updateStatistics(book);
+//        statisticsSvc.updateStatistics(book);
     }
 
     // 별점 검증 로직 (1~5 범위, 0.5 단위)
