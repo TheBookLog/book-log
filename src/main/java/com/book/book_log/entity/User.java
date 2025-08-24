@@ -41,10 +41,10 @@ public class User {
     @NotNull(message = "OAuth ID cannot be null")
     private String oauthId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "oauth_provider", length = 20, nullable = false)
-    @NotNull(message = "OAuth provider cannot be null")
-    private OAuthProvider oauthProvider;
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "oauth_provider", length = 20, nullable = false)
+//    @NotNull(message = "OAuth provider cannot be null")
+//    private OAuthProvider oauthProvider;
 
     @Lob
     @Column(name = "oauth_token", nullable = false)
