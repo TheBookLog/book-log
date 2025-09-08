@@ -52,7 +52,7 @@ public class AuthController {
     // 사용자의 JWT 발급 및 전달
     @PostMapping("/issue-token")
     public ResponseEntity<String> issueJwtToken(@RequestBody UserResponseDTO user) {
-        if (user.getId() == null || user.getId().isEmpty()) {
+        if (user.getId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required");
         }
         String jwtToken = JwtUtil.generateToken(user.getId());
@@ -65,6 +65,4 @@ public class AuthController {
         SecurityContextHolder.clearContext(); // 인증 정보 초기화
         return ResponseEntity.ok("성공적으로 로그아웃 되었습니다."); // 로그아웃 성공 메시지 반환
     }
-
-    // jira-github 테스트
 }

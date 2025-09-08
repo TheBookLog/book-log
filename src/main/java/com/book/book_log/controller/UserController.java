@@ -16,7 +16,7 @@ public class UserController {
 
     // 사용자 정보 조회
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable String id) {
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {
             System.out.println("Fetching User ID: " + id); // 추가 로그: 요청받은 ID 확인
             UserResponseDTO user = uSvc.getUserById(id);
@@ -31,7 +31,7 @@ public class UserController {
     // 사용자 정보 업데이트
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestBody UserRequestDTO userRequestDTO) {
         UserResponseDTO updatedUser = uSvc.updateUser(id, userRequestDTO);
         return ResponseEntity.ok(updatedUser);
@@ -39,7 +39,7 @@ public class UserController {
 
     // 사용자 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable String id) {
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         uSvc.deleteUser(id);
         return ResponseEntity.ok("User deleted successfully");
     }

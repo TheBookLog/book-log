@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,7 +18,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", length = 50)
+    @Column(name = "username", length = 50, nullable = false)
     private String username;
 
     @Enumerated(EnumType.STRING)
@@ -30,11 +29,11 @@ public class User {
     @Column(name = "age_group")
     private AgeGroup ageGroup;
 
-    @Column(name = "oauth_provider", nullable = false, length = 20)
-    private String oauthProvider;
+    @Column(name = "oauth_id", nullable = false, length = 100)
+    private String oauthId;
 
-    @Column(name = "oauth_provider_id", nullable = false, length = 100)
-    private String oauthProviderId;
+    @Column(name = "oauth_provider", nullable = false, length = 20)
+    private OAuthProvider oauthProvider;
 
     @Lob
     @Column(name = "oauth_token", nullable = false)

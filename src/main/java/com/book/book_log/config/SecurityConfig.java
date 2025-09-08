@@ -11,27 +11,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRF 비활성화
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/swagger-ui/**",       // Swagger UI 경로
-                                "/v3/api-docs/**",      // OpenAPI docs
-                                "/v3/api-docs.yaml",     // OpenAPI YAML
-                                "/login/oauth2/**", // Spring Security OAuth2 로그인 리다이렉트
-                                "/api/auth/issue-token", // JWT 발급 엔드포인트 허용
-                                "/api/books/**", // 도서 검색 API 인증 없이 허용
-                                "/api/categories/**", // 카테고리 검색 인증 없이 활용
-                                "/api/logs/**", // 로그 API 인증 없이 허용
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml",
+                                "/login/oauth2/**",
+                                "/api/auth/**", // ✅ "/api/auth/" 하위의 모든 경로를 인증 없이 허용
+                                "/api/books/**",
+                                "/api/categories/**",
+                                "/api/logs/**",
                                 "/api/users/**"
-                        ).permitAll()                // 인증 없이 허용
-                        .anyRequest().authenticated()    // 나머지 요청은 인증 필요
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // 필터 추가
+                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/api/auth/kakao-login/success") // 로그인 성공 시 리다이렉트 경로
-                        .failureUrl("/api/auth/kakao-login/failure") // 로그인 실패 시 리다이렉트 경로
+                         .defaultSuccessUrl("/api/auth/kakao-login/success")
+                        .failureUrl("/api/auth/kakao-login/failure")
                 )
-                .securityContext(context -> context.requireExplicitSave(false)); // 인증 상태 유지 설정
+                .securityContext(context -> context.requireExplicitSave(false));
         return http.build();
     }
 }
