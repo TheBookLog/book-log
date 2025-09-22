@@ -18,7 +18,7 @@ const LeftRight = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccebff;
+    background-color: ${({ theme }) => theme.colors.primary};
     z-index: -1; /* 배경이 맨 뒤에 오도록 설정 */
 `;
 
@@ -68,7 +68,7 @@ const Input = styled.input`
     border-radius: 10px;
     width: 440px;
     margin-top : 10px;
-    background-color : #EBF1F5;
+    background-color : ${({ theme }) => theme.colors.secondary};
     outline : none;
     autocomplete : false;
 `;

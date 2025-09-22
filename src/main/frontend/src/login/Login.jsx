@@ -15,7 +15,7 @@ const LeftRight = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #CCEBFF;
+    background-color: ${({ theme }) => theme.colors.primary};
     z-index: -1; /* 배경이 맨 뒤에 오도록 설정 */
 `;
 

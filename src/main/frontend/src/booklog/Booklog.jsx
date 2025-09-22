@@ -35,7 +35,7 @@ const Input = styled.input`
     padding: 8px 10px;
     padding-left: 40px;
     font-size: 15px;
-    border: 2px solid #CCEBFF;
+    border: 2px solid ${({ theme }) => theme.colors.primary};
     border-radius: 8px;
     width: 100%;
     min-height: 40px;
@@ -56,7 +56,7 @@ const SearchIcon = styled.img`
 
 const Category = styled.div`
     width: 400px;
-    background-color: #CCEBFF;
+    background-color: ${({ theme }) => theme.colors.primary};
     border-radius: 10px;
     padding: 10px;
     height: 560px;
@@ -89,7 +89,7 @@ const Cardcontainer = styled.div`
 const Card = styled.div`
     width:100%;
     max-width : 950px;
-    background-color: #EBF1F5;
+    background-color: ${({ theme }) => theme.colors.secondary};
     min-height: 500px;
     border-radius: 20px;
     display: flex;
