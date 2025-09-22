@@ -24,7 +24,7 @@ const DetailWrapper = styled.div`
 `;
 
 const Detail = styled.div`
-    background-color : #EBF1F5;
+    background-color : ${({ theme }) => theme.colors.secondary};
     border-radius : 10px;
     width : 100%;
     align-items : center;
@@ -211,7 +211,7 @@ function Bookdetail() {
             </DetailWrapper>
             <Logcontainer>
                 <Text size="15px">Log ⭐ {averageRating}</Text>
-                <SubmitButton bgColor="#CCEBFF" onClick={navigateToWritelog}>Log 작성</SubmitButton>
+                <SubmitButton bgColor="${({ theme }) => theme.colors.primary}" onClick={navigateToWritelog}>Log 작성</SubmitButton>
             </Logcontainer>
             <LogsWrapper>
                 {logs.map((log) => (

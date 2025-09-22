@@ -13,21 +13,27 @@ import Bookdetail from './booklog/Bookdetail';
 import "react-datepicker/dist/react-datepicker.css";
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
+import { ThemeProvider } from 'styled-components';
+import { theme } from './styles/theme';
+
 function App() {
   return (
-    <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/oauth/kakao/success" element={<Redirect />}></Route>
-        <Route path="/addinformation" element={<AddInformation />}></Route>
-        <Route path="/booklog" element={<Booklog />}></Route>
-        <Route path="/mypage" element={<Mypage />}></Route>
-        <Route path="/writelog/:id" element={<Writelog />}></Route>
-        <Route path="/bookdetail/:id" element={<Bookdetail />}></Route>
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/oauth/kakao/success" element={<Redirect />}></Route>
+          <Route path="/addinformation" element={<AddInformation />}></Route>
+          <Route path="/booklog" element={<Booklog />}></Route>
+          <Route path="/mypage" element={<Mypage />}></Route>
+          <Route path="/writelog/:id" element={<Writelog />}></Route>
+          <Route path="/bookdetail/:id" element={<Bookdetail />}></Route>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
+    
   );
 }
 

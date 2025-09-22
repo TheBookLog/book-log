@@ -12,7 +12,7 @@ import Ad4 from "./Ad4.jpg";
 registerLocale("ko", ko);
 
 const Footer = styled.div`
-    background-color: #ccebff;
+    background-color: ${({ theme }) => theme.colors.primary};
     text-align: center;
     display: flex;
     height: 250px;
@@ -44,7 +44,7 @@ const BookLogContainer = styled.div`
     margin: 0 auto;
     overflow: hidden;
     border-radius: 15px;
-    border: 10px solid #EBF1F5;
+    border: 10px solid ${({ theme }) => theme.colors.secondary};
     background-color: white;
     z-index: 3;
     position: relative;
@@ -94,7 +94,7 @@ const Input = styled.textarea`
     width: ${(props) => props.width || ""};
     height: ${(props) => props.height || "200px"};
     border-radius: 15px;
-    border: 5px solid #EBF1F5;
+    border: 5px solid ${({ theme }) => theme.colors.secondary};
     padding: 10px;
     font-size: 16px;
     box-sizing: border-box;
@@ -122,7 +122,7 @@ const StyledDatePicker = styled(DatePicker)`
     width: 150px;
     height: 15px;
     padding: 10px;
-    border: 5px solid #EBF1F5;
+    border: 5px solid ${({ theme }) => theme.colors.secondary};
     border-radius: 20px;
     font-size: 15px;
     outline: none;

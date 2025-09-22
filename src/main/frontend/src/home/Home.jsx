@@ -53,7 +53,7 @@ const ContentSliderContainer = styled.div`
     margin: 0 auto;
     overflow: hidden;
     border-radius: 15px;
-    border: 10px solid #EBF1F5;
+    border: 10px solid ${({ theme }) => theme.colors.secondary};
     background-color: white;
     z-index: 3;
     position: relative;
@@ -132,7 +132,7 @@ const ContentImage = styled.img`
 `;
 
 const Footer = styled.div`
-    background-color: #ccebff;
+    background-color: ${({ theme }) => theme.colors.primary};
     text-align: center;
     display: flex;
     height: 250px;

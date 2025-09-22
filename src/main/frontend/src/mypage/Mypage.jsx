@@ -50,7 +50,7 @@ const Input = styled.input`
     border-radius: 10px;
     width: 440px;
     margin-top : 5px;
-    background-color : #EBF1F5;
+    background-color : ${({ theme }) => theme.colors.secondary};
     outline : none;
     autocomplete : false;
 `;
@@ -78,7 +78,7 @@ const Label = styled.label`
 `;
 
 const Header = styled.div`
-    background-color : #ccebff;
+    background-color : ${({ theme }) => theme.colors.primary};
     text-align : center;
     display : flex;
     height : 250px;
