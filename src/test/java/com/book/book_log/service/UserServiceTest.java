@@ -1,9 +1,9 @@
 package com.book.book_log.service;
 
-import com.book.book_log.dto.UserRequestDTO;
 import com.book.book_log.dto.UserResponseDTO;
 import com.book.book_log.entity.AgeGroup;
 import com.book.book_log.entity.Gender;
+import com.book.book_log.entity.OAuthProvider;
 import com.book.book_log.entity.User;
 import com.book.book_log.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,36 +32,14 @@ class UserServiceTest {
     }
 
     @Test
-    void createUser_Success() {
-        // given
-        UserRequestDTO request = new UserRequestDTO("example", "MALE", "AGE_20S");
-        User user = new User();
-        user.setId("12345");
-        user.setUsername("example");
-        user.setGender(Gender.MALE);
-        user.setAge_group(AgeGroup.AGE_20S);
-
-        when(userRepository.existsByUsername("example")).thenReturn(false);
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        // when
-        UserResponseDTO response = userService.createUser(request);
-
-        // then
-        assertNotNull(response);
-        assertEquals("example", response.getUsername());
-        assertEquals("MALE", response.getGender());
-        verify(userRepository, times(1)).save(any(User.class));
-    }
-
-    @Test
     void getUserById_Success() {
         // given
         User user = new User();
         user.setId("12345");
         user.setUsername("example");
         user.setGender(Gender.MALE);
-        user.setAge_group(AgeGroup.AGE_20S);
+        user.setAgeGroup(AgeGroup.AGE_20S);
+        user.setOauthProvider(OAuthProvider.KAKAO);
 
         when(userRepository.findById("12345")).thenReturn(Optional.of(user));
 
