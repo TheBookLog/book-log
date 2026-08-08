@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew test)",
+      "Bash(./gradlew build)",
+      "Bash(./gradlew bootRun)",
+      "Bash(./gradlew clean)",
+      "Bash(./gradlew tasks)",
+      "Bash(claude mcp list)",
+      "Bash(brew services list)",
+      "Bash(brew list)"
+    ]
+  }
+}
