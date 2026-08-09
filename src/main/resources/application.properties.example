@@ -1,0 +1,38 @@
+## application.properties 템플릿.
+## 이 파일을 application.properties로 복사한 뒤 <> 부분을 채운다. (원본은 gitignore 대상)
+##
+## redirect-uri는 아래 템플릿 그대로 둘 것. 경로를 직접 지어 쓰면 스프링 시큐리티의
+## 콜백 필터 경로(/login/oauth2/code/{registrationId})와 어긋나 KOE006이 난다. (이슈 #78)
+## 카카오는 스프링이 아는 제공자가 아니라 이 항목을 생략하면 기동이 실패한다.
+## 카카오 개발자 콘솔에는 http://localhost:8080/login/oauth2/code/kakao 를 등록한다.
+
+spring.application.name=book-log
+
+# PostgreSQL (docker compose up -d)
+spring.datasource.url=jdbc:postgresql://localhost:5432/booklog
+spring.datasource.username=bookloguser
+spring.datasource.password=booklog
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+spring.sql.init.mode=never
+
+springdoc.api-docs.enabled=true
+springdoc.swagger-ui.enabled=true
+
+# Kakao OAuth
+spring.security.oauth2.client.registration.kakao.client-id=<카카오 REST API 키>
+spring.security.oauth2.client.registration.kakao.redirect-uri={baseUrl}/login/oauth2/code/{registrationId}
+spring.security.oauth2.client.registration.kakao.authorization-grant-type=authorization_code
+spring.security.oauth2.client.registration.kakao.scope=profile_nickname
+
+spring.security.oauth2.client.provider.kakao.authorization-uri=https://kauth.kakao.com/oauth/authorize
+spring.security.oauth2.client.provider.kakao.token-uri=https://kauth.kakao.com/oauth/token
+spring.security.oauth2.client.provider.kakao.user-info-uri=https://kapi.kakao.com/v2/user/me
+spring.security.oauth2.client.provider.kakao.user-name-attribute=id
+
+# Aladin API
+aladin.api.key=<알라딘 TTB 키>
+aladin.api.base-url=https://www.aladin.co.kr/ttb/api/
