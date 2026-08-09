@@ -55,22 +55,18 @@ function Header() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-    const [localStorageToken, setLocalStorageToken] = useState(localStorage.getItem("accessToken"));
+    const [storedUserId, setStoredUserId] = useState(localStorage.getItem("userId"));
 
     useEffect(() => {
-        // 로그인 여부를 LocalStorage에서 확인
-        const accessToken = localStorage.getItem("accessToken");
-        setLocalStorageToken(accessToken);
+        const userId = localStorage.getItem("userId");
+        setStoredUserId(userId);
 
-        console.log("현재 토큰:", accessToken);
-        console.log("redux 상태 : ", isLoggedIn);
-
-        if (accessToken) {
+        if (userId) {
             dispatch(login());
         } else {
             dispatch(logout());
         }
-    }, [dispatch, localStorageToken]);
+    }, [dispatch, storedUserId]);
 
     const navigateToHome = () => {
         navigate("/");
