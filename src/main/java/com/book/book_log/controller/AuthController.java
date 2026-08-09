@@ -2,8 +2,10 @@ package com.book.book_log.controller;
 
 import com.book.book_log.dto.UserResponseDTO;
 import com.book.book_log.service.CustomOAuth2UserService;
+import com.book.book_log.util.JwtCookieFactory;
 import com.book.book_log.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,8 @@ import java.net.URI;
 public class AuthController {
     private final CustomOAuth2UserService oAuth2uSvc;
     private final OAuth2AuthorizedClientService authorizedClientSvc;
+    private final JwtCookieFactory jwtCookieFactory;
+    private final JwtUtil jwtUtil;
 
     // 카카오 로그인 성공 리디렉션 처리
     @GetMapping("/kakao-login/success")
@@ -38,13 +42,14 @@ public class AuthController {
             OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
 
             UserResponseDTO user = oAuth2uSvc.processOAuth2User(authenticationToken, accessToken);
-            String jwt = JwtUtil.generateToken(user.getId());
+            String jwt = jwtUtil.generateToken(user.getId());
 
-            // 프론트엔드로 JWT와 userId를 쿼리스트링으로 전달
-            String redirectUrl = String.format("http://localhost:3000/oauth/kakao/success?token=%s&userId=%s",
-                    jwt, user.getId());
+            // JWT는 HttpOnly 쿠키로만 전달한다. 주소창에 실으면 히스토리·액세스 로그에 남는다.
+            String redirectUrl = String.format("http://localhost:3000/oauth/kakao/success?userId=%s",
+                    user.getId());
 
             return ResponseEntity.status(HttpStatus.FOUND)
+                    .header(HttpHeaders.SET_COOKIE, jwtCookieFactory.create(jwt).toString())
                     .location(URI.create(redirectUrl))
                     .build();
         } catch (Exception e) {
@@ -59,14 +64,16 @@ public class AuthController {
         if (user.getId() == null || user.getId().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required");
         }
-        String jwtToken = JwtUtil.generateToken(user.getId());
+        String jwtToken = jwtUtil.generateToken(user.getId());
         return ResponseEntity.ok(jwtToken);
     }
 
     // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
-        SecurityContextHolder.clearContext(); // 인증 정보 초기화
-        return ResponseEntity.ok("성공적으로 로그아웃 되었습니다."); // 로그아웃 성공 메시지 반환
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookieFactory.expire().toString())
+                .body("성공적으로 로그아웃 되었습니다.");
     }
 }

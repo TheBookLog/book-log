@@ -1,5 +1,6 @@
 package com.book.book_log.config;
 
+import com.book.book_log.util.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtUtil jwtUtil) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
@@ -28,9 +29,11 @@ public class SecurityConfig {
                         ).permitAll()                // 인증 없이 허용
                         .anyRequest().authenticated()    // 나머지 요청은 인증 필요
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // 필터 추가
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class) // 필터 추가
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/api/auth/kakao-login/success") // 로그인 성공 시 리다이렉트 경로
+                        // true: 인증 전에 막힌 요청이 저장돼 있어도 무시하고 항상 이 경로로 보낸다.
+                        // 저장된 요청으로 가버리면 JWT 쿠키를 발급하는 핸들러가 실행되지 않는다.
+                        .defaultSuccessUrl("/api/auth/kakao-login/success", true)
                         // failureUrl로 지정한 경로는 DefaultLoginPageGeneratingFilter가 가로채
                         // 기본 로그인 페이지를 렌더하므로 컨트롤러에 도달하지 않는다
                         .failureHandler((request, response, exception) -> {
