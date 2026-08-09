@@ -1,0 +1,22 @@
+# 로컬 개발용 PostgreSQL (docker compose up -d).
+# 테스트는 이걸 쓰지 않는다 - Testcontainers가 별도 컨테이너를 띄운다.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: booklog-postgres
+    environment:
+      POSTGRES_DB: booklog
+      POSTGRES_USER: bookloguser
+      POSTGRES_PASSWORD: booklog # 로컬 전용
+    ports:
+      - "5432:5432"
+    volumes:
+      - booklog-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bookloguser -d booklog"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  booklog-pgdata:
