@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
 import image1 from "./image1.png";
 import image from "./image.png";
 import Modal from "../component/Modal";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, SubmitButton } from "../component/Button";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
@@ -127,7 +128,8 @@ const ModalButtonContainer = styled.div`
 function Mypage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { id } = useParams();
+    // /mypage 라우트에는 경로 변수가 없다. 로그인 시 저장해둔 값을 쓴다.
+    const id = localStorage.getItem("userId");
 
     const [formData, setFormData ] = useState({
         nickname : "",
@@ -139,6 +141,10 @@ function Mypage() {
     const [nicknameError, setNicknameError] = useState("");
     
     useEffect(() => { //기본값이 GET
+        if (!id) {
+            navigate("/login");
+            return;
+        }
         fetch(`/api/users/${id}`)
             .then((res) => res.json())
             .then((data) => {
@@ -149,7 +155,7 @@ function Mypage() {
                 });
             })
             .catch((err) => console.error("Error : ",err));
-    },[id]);
+    },[id, navigate]);
 
     const handleNinknameChange = async (e) => {
         const newNickname = e.target.value;
@@ -179,9 +185,14 @@ function Mypage() {
     };
 
     const handleLogout = async () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("userId");
+        // 쿠키는 서버만 지울 수 있다
+        try {
+            await axios.post("/api/auth/logout");
+        } catch (error) {
+            console.error("로그아웃 요청 실패 : ", error);
+        }
 
+        localStorage.removeItem("userId");
         dispatch(logout());
 
         alert("로그아웃되었습니다.");

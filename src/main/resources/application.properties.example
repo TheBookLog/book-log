@@ -19,6 +19,10 @@ spring.jpa.properties.hibernate.format_sql=true
 
 spring.sql.init.mode=never
 
+# JWT 서명 키. 이 값을 아는 사람은 임의의 사용자로 토큰을 위조할 수 있으므로
+# 절대 커밋하지 않는다. 생성: openssl rand -base64 48
+app.jwt.secret=<32바이트 이상 랜덤 문자열>
+
 springdoc.api-docs.enabled=true
 springdoc.swagger-ui.enabled=true
 

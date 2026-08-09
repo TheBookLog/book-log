@@ -180,13 +180,7 @@ function AddInformation() {
             return;
         }
         
-        try { //쿠키에서 토큰 가져오기
-            const accessToken = localStorage.getItem("accessToken");
-            if (!accessToken) {
-                console.error("인증 정보 없음");
-                navigate("/login");
-                return;
-            }
+        try {
             let userId = kakaoId || localStorage.getItem("userId");
             if (!userId) {
                 console.error("사용자 정보 없음");
@@ -194,17 +188,13 @@ function AddInformation() {
                 return;
             }
             const response = await axios.put(
-                `http://localhost:8080/api/users/${userId}`,
+                `/api/users/${userId}`,
                 {
                     nickname : formData.nickname,
                     gender : formData.gender,
                     ageGroup : formData.ageGroup,
                 },
-                {
-                    headers : {Authorization : `Bearer ${accessToken}`},
-                    withCredentials : true,
-                }
-
+                { withCredentials : true }
             );
             console.log("사용자 정보 업데이트 성공 : ",response.data);
             navigate("/home");

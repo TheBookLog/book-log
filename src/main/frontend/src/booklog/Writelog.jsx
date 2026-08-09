@@ -195,7 +195,6 @@ function Writelog({ maxStars = 5, onRatingChange }) {
     // const navigate = useNavigate();
     const { id } = useParams();
     const userId = localStorage.getItem("userId");
-    const accessToken = localStorage.getItem("accessToken");
 
     const [bookData, setBookData] = useState(null);
 
@@ -247,7 +246,7 @@ function Writelog({ maxStars = 5, onRatingChange }) {
     };
 
     const handleSubmit = async () => {
-        if (!accessToken || !userId) {
+        if (!userId) {
             alert("로그인이 필요합니다.");
             return;
         }
@@ -269,13 +268,7 @@ function Writelog({ maxStars = 5, onRatingChange }) {
         console.log(requestBody);
 
         try {
-            await axios.post(`/api/logs/${userId}`, requestBody, 
-            {
-                headers : {Authorization : `Bearer ${accessToken}`},
-                withCredentials : true,
-            }
-            
-        )
+            await axios.post(`/api/logs/${userId}`, requestBody, { withCredentials : true })
         } catch (error) {
             console.error("에러 발생:", error);
         }

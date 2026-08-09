@@ -8,34 +8,21 @@ function Redirect() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        console.log("현재 URL : ", window.location.href);
-        
+        // JWT는 HttpOnly 쿠키로 들어와 있어 JS에서 읽지 않는다
         const params = new URLSearchParams(window.location.search);
-        const token = params.get("token");
         const userId = params.get("userId");
         const isNewUser = params.get("isNewUser");
 
-        console.log("저장할 토큰 : ",token);
-
-        if (token && userId) {
-            localStorage.setItem("accessToken", token);
-            localStorage.setItem("userId", userId);
-            console.log("저장된 토큰: ", localStorage.getItem("accessToken"));
-
-            dispatch(login()); //redux 로그인상태 업데이트
-
-            setTimeout(()=>{
-                if (isNewUser === "true") {
-                    navigate("/addinformation");
-                } else {
-                    navigate("/");
-                }
-            }, 500);
-
-        } else {
-            console.error("카카오 로그인 실패 또는 토큰 누락");
-            navigate("/login"); // 실패 시 로그인 페이지로 리다이렉션
+        if (!userId) {
+            console.error("카카오 로그인 실패");
+            navigate("/login");
+            return;
         }
+
+        localStorage.setItem("userId", userId);
+        dispatch(login()); //redux 로그인상태 업데이트
+
+        navigate(isNewUser === "true" ? "/addinformation" : "/");
     }, [navigate, dispatch]);
 
     return (
