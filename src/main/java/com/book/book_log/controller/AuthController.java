@@ -25,6 +25,10 @@ public class AuthController {
     // 카카오 로그인 성공 리디렉션 처리
     @GetMapping("/kakao-login/success")
     public ResponseEntity<Void> kakaoLoginSuccess(OAuth2AuthenticationToken authenticationToken) {
+        // 로그인 흐름을 거치지 않고 직접 호출하면 토큰이 없다
+        if (authenticationToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         try {
             OAuth2AuthorizedClient authorizedClient = authorizedClientSvc.loadAuthorizedClient(
                     authenticationToken.getAuthorizedClientRegistrationId(),
