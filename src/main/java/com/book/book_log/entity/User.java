@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "users") // user는 PostgreSQL 예약어라 테이블명을 명시한다
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,13 +47,12 @@ public class User {
     @NotNull(message = "OAuth provider cannot be null")
     private OAuthProvider oauthProvider;
 
-    @Lob
-    @Column(name = "oauth_token", nullable = false)
+    // @Lob은 PostgreSQL에서 oid로 매핑돼 조회가 깨진다
+    @Column(name = "oauth_token", nullable = false, columnDefinition = "text")
     @NotNull(message = "OAuth token cannot be null")
     private String oauthToken;
 
-    @Lob
-    @Column(name = "refresh_token", nullable = false)
+    @Column(name = "refresh_token", nullable = false, columnDefinition = "text")
     @NotNull(message = "Refresh token cannot be null")
     private String refreshToken;
 

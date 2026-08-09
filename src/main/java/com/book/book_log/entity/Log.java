@@ -34,7 +34,8 @@ public class Log {
     @Column(length = 255)
     private String quote;
 
-    @Lob
+    // @Lob은 PostgreSQL에서 oid로 매핑돼 조회가 깨진다
+    @Column(columnDefinition = "text")
     private String content;
 
     @Column(nullable = false)
